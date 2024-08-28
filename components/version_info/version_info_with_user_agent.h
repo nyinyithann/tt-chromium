@@ -21,7 +21,12 @@ std::string GetProductNameAndVersionForReducedUserAgent(
 // Returns the product name and version information for the User-Agent header,
 // in the format: Chrome/<major_version>.<minor_version>.<build>.<patch>.
 constexpr std::string_view GetProductNameAndVersionForUserAgent() {
-  return "Chrome/" PRODUCT_VERSION;
+  // tt-patch: add-user-agent
+  // the above comment is misleading, the return value is not used for
+  // User-Agent header version_info::GetProductNameAndVersionForReducedUserAgent
+  // is used for User-Agent header the return value below is mostly used in WEB
+  // UI like chrome://gpu/
+  return "Chrome/" PRODUCT_VERSION " Taktak/" PRODUCT_VERSION;
 }
 
 }  // namespace version_info
