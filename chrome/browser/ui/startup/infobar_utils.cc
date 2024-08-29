@@ -154,9 +154,12 @@ void AddInfoBarsIfNecessary(Browser* browser,
     infobars::ContentInfoBarManager* infobar_manager =
         infobars::ContentInfoBarManager::FromWebContents(web_contents);
 
+    // tt-patch: hide google api key request popup
+    /*
     if (!google_apis::HasAPIKeyConfigured()) {
       GoogleApiKeysInfoBarDelegate::Create(infobar_manager);
     }
+    */
 
     if (ObsoleteSystem::IsObsoleteNowOrSoon()) {
       PrefService* local_state = g_browser_process->local_state();
