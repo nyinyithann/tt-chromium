@@ -32,7 +32,6 @@
 #include "ash/picker/views/picker_style.h"
 #include "ash/picker/views/picker_submenu_controller.h"
 #include "ash/picker/views/picker_submenu_view.h"
-#include "ash/picker/views/picker_symbol_item_view.h"
 #include "ash/picker/views/picker_view_delegate.h"
 #include "ash/picker/views/picker_widget.h"
 #include "ash/picker/views/picker_zero_state_view.h"
@@ -182,7 +181,7 @@ class FakePickerViewDelegate : public PickerViewDelegate {
     base::RepeatingClosure stop_search_function;
     FakeCategorySearchFunction category_results_function;
     PickerActionType action_type = PickerActionType::kInsert;
-    std::vector<PickerSearchResult> emoji_results;
+    std::vector<PickerEmojiResult> emoji_results;
     std::vector<std::string> suggested_emojis;
     PickerModeType mode = PickerModeType::kNoSelection;
   };
@@ -261,8 +260,8 @@ class FakePickerViewDelegate : public PickerViewDelegate {
     return options_.action_type;
   }
 
-  std::vector<PickerSearchResult> GetSuggestedEmoji() override {
-    std::vector<PickerSearchResult> results;
+  std::vector<PickerEmojiResult> GetSuggestedEmoji() override {
+    std::vector<PickerEmojiResult> results;
     for (const std::string& emoji : options_.suggested_emojis) {
       results.push_back(PickerEmojiResult::Emoji(base::UTF8ToUTF16(emoji)));
     }
@@ -1679,7 +1678,7 @@ TEST_P(PickerViewEmojiTest, SearchingShowsExpressionResultsInEmojiBar) {
   EXPECT_TRUE(picker_view->emoji_bar_view_for_testing()->GetVisible());
   EXPECT_THAT(picker_view->emoji_bar_view_for_testing()->GetItemsForTesting(),
               ElementsAre(Truly(&views::IsViewClass<PickerEmojiItemView>),
-                          Truly(&views::IsViewClass<PickerSymbolItemView>)));
+                          Truly(&views::IsViewClass<PickerEmojiItemView>)));
 }
 
 TEST_P(PickerViewEmojiTest, InitiallyShowsSuggestedEmojis) {

@@ -208,7 +208,7 @@ void ApplicationContextImpl::StartTearDown() {
   }
 
   // Need to clear browser states before the IO thread.
-  chrome_browser_state_manager_.reset();
+  profile_manager_.reset();
 
   // The policy providers managed by `browser_policy_connector_` need to shut
   // down while the IO threads is still alive. The monitoring framework owned by
@@ -310,21 +310,13 @@ const std::string& ApplicationContextImpl::GetApplicationCountry() {
   return application_country_;
 }
 
-// TODO(crbug.com/358299872): After all usage has changed to
-// GetProfileManager(), remove this method.
-ChromeBrowserStateManager*
-ApplicationContextImpl::GetChromeBrowserStateManager() {
+ProfileManagerIOS* ApplicationContextImpl::GetProfileManager() {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
-  return GetProfileManager();
-}
-
-ChromeBrowserStateManager* ApplicationContextImpl::GetProfileManager() {
-  DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
-  if (!chrome_browser_state_manager_) {
-    chrome_browser_state_manager_ = std::make_unique<ProfileManagerIOSImpl>(
+  if (!profile_manager_) {
+    profile_manager_ = std::make_unique<ProfileManagerIOSImpl>(
         GetLocalState(), base::PathService::CheckedGet(ios::DIR_USER_DATA));
   }
-  return chrome_browser_state_manager_.get();
+  return profile_manager_.get();
 }
 
 metrics_services_manager::MetricsServicesManager*
@@ -519,18 +511,8 @@ SystemIdentityManager* ApplicationContextImpl::GetSystemIdentityManager() {
 AccountProfileMapper* ApplicationContextImpl::GetAccountProfileMapper() {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
   if (!account_profile_mapper_) {
-    size_t profile_count = GetProfileManager()
-                               ->GetProfileAttributesStorage()
-                               ->GetNumberOfProfiles();
-
-    if (profile_count == 0) {
-      // This case can happens on the first startup.
-      // TODO(crbug.com/331783685): AccountProfileMapper needs to listen for
-      // profiles being added and removed.
-      profile_count = 1;
-    }
-    account_profile_mapper_ = std::make_unique<AccountProfileMapper>(
-        GetSystemIdentityManager(), profile_count);
+    account_profile_mapper_ =
+        std::make_unique<AccountProfileMapper>(GetSystemIdentityManager());
   }
   return account_profile_mapper_.get();
 }
@@ -538,8 +520,8 @@ AccountProfileMapper* ApplicationContextImpl::GetAccountProfileMapper() {
 IncognitoSessionTracker* ApplicationContextImpl::GetIncognitoSessionTracker() {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
   if (!incognito_session_tracker_) {
-    incognito_session_tracker_ = std::make_unique<IncognitoSessionTracker>(
-        GetChromeBrowserStateManager());
+    incognito_session_tracker_ =
+        std::make_unique<IncognitoSessionTracker>(GetProfileManager());
   }
   return incognito_session_tracker_.get();
 }
@@ -608,9 +590,9 @@ void ApplicationContextImpl::OnAppEnterState(AppState app_state) {
   // Request saving the local state prefs and all loaded ChromeBrowserStates'
   // prefs (taking care not to create the objects if they have not been created
   // yet).
-  if (chrome_browser_state_manager_) {
+  if (profile_manager_) {
     std::vector<ChromeBrowserState*> loaded_browser_states =
-        chrome_browser_state_manager_->GetLoadedBrowserStates();
+        profile_manager_->GetLoadedBrowserStates();
 
     for (ChromeBrowserState* browser_state : loaded_browser_states) {
       switch (app_state) {

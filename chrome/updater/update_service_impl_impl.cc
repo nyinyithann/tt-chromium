@@ -113,8 +113,8 @@ void GetComponents(
     scoped_refptr<PolicyService> policy_service,
     crx_file::VerifierFormat verifier_format,
     scoped_refptr<PersistedData> persisted_data,
-    const AppClientInstallData& app_client_install_data,
-    const AppInstallDataIndex& app_install_data_index,
+    const base::flat_map<std::string, std::string>& app_client_install_data,
+    const base::flat_map<std::string, std::string>& app_install_data_index,
     const std::string& install_source,
     UpdateService::Priority priority,
     bool update_blocked,
@@ -455,6 +455,8 @@ base::Version GetRegisteredInstallerVersion(const std::string& app_id) {
 }  // namespace internal
 
 namespace {
+
+constexpr base::flat_map<std::string, std::string> kEmptyFlatMap;
 
 update_client::Callback MakeUpdateClientCallback(
     base::OnceCallback<void(UpdateService::Result)> callback) {
@@ -824,8 +826,7 @@ void UpdateServiceImplImpl::ForceInstall(
       Priority::kBackground,
       base::BindOnce(
           &UpdateServiceImplImpl::OnShouldBlockForceInstallForMeteredNetwork,
-          this, app_ids_to_install, AppClientInstallData(),
-          AppInstallDataIndex(),
+          this, app_ids_to_install, kEmptyFlatMap, kEmptyFlatMap,
           UpdateService::PolicySameVersionUpdate::kNotAllowed, state_update,
           std::move(callback)));
 }
@@ -888,8 +889,9 @@ void UpdateServiceImplImpl::Update(
       priority,
       base::BindOnce(
           &UpdateServiceImplImpl::OnShouldBlockUpdateForMeteredNetwork, this,
-          std::vector<std::string>{app_id}, AppClientInstallData(),
-          AppInstallDataIndex({std::make_pair(app_id, install_data_index)}),
+          std::vector<std::string>{app_id}, kEmptyFlatMap,
+          base::flat_map<std::string, std::string>(
+              {std::make_pair(app_id, install_data_index)}),
           priority, policy_same_version_update, state_update,
           std::move(callback)));
 }
@@ -910,7 +912,7 @@ void UpdateServiceImplImpl::UpdateAll(
       priority,
       base::BindOnce(
           &UpdateServiceImplImpl::OnShouldBlockUpdateForMeteredNetwork, this,
-          app_ids, AppClientInstallData(), AppInstallDataIndex(), priority,
+          app_ids, kEmptyFlatMap, kEmptyFlatMap, priority,
           UpdateService::PolicySameVersionUpdate::kNotAllowed, state_update,
           base::BindOnce(
               [](base::OnceCallback<void(Result)> callback,
@@ -967,9 +969,9 @@ void UpdateServiceImplImpl::Install(
       base::BindOnce(
           &internal::GetComponents, config_->GetPolicyService(),
           config_->GetCrxVerifierFormat(), config_->GetUpdaterPersistedData(),
-          AppClientInstallData(
+          base::flat_map<std::string, std::string>(
               {std::make_pair(registration.app_id, client_install_data)}),
-          AppInstallDataIndex(
+          base::flat_map<std::string, std::string>(
               {std::make_pair(registration.app_id, install_data_index)}),
           kInstallSourceTaggedMetainstaller, priority,
           /*update_blocked=*/false, PolicySameVersionUpdate::kAllowed),
@@ -1249,8 +1251,8 @@ void UpdateServiceImplImpl::OnShouldBlockCheckForUpdateForMeteredNetwork(
           &update_client::UpdateClient::CheckForUpdate, update_client_, app_id,
           base::BindOnce(&internal::GetComponents, config_->GetPolicyService(),
                          config_->GetCrxVerifierFormat(),
-                         config_->GetUpdaterPersistedData(),
-                         AppClientInstallData(), AppInstallDataIndex(),
+                         config_->GetUpdaterPersistedData(), kEmptyFlatMap,
+                         kEmptyFlatMap,
                          priority == UpdateService::Priority::kForeground
                              ? kInstallSourceOnDemand
                              : "",
@@ -1264,8 +1266,8 @@ void UpdateServiceImplImpl::OnShouldBlockCheckForUpdateForMeteredNetwork(
 
 void UpdateServiceImplImpl::OnShouldBlockUpdateForMeteredNetwork(
     const std::vector<std::string>& app_ids,
-    const AppClientInstallData& app_client_install_data,
-    const AppInstallDataIndex& app_install_data_index,
+    const base::flat_map<std::string, std::string>& app_client_install_data,
+    const base::flat_map<std::string, std::string>& app_install_data_index,
     Priority priority,
     PolicySameVersionUpdate policy_same_version_update,
     base::RepeatingCallback<void(const UpdateState&)> state_update,
@@ -1293,8 +1295,8 @@ void UpdateServiceImplImpl::OnShouldBlockUpdateForMeteredNetwork(
 
 void UpdateServiceImplImpl::OnShouldBlockForceInstallForMeteredNetwork(
     const std::vector<std::string>& app_ids,
-    const AppClientInstallData& app_client_install_data,
-    const AppInstallDataIndex& app_install_data_index,
+    const base::flat_map<std::string, std::string>& app_client_install_data,
+    const base::flat_map<std::string, std::string>& app_install_data_index,
     PolicySameVersionUpdate policy_same_version_update,
     base::RepeatingCallback<void(const UpdateState&)> state_update,
     base::OnceCallback<void(Result)> callback,

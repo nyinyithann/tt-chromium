@@ -225,6 +225,9 @@ void AuthContainerView::AddPinStatusView() {
 void AuthContainerView::AddFingerprintView() {
   CHECK_EQ(fingerprint_view_, nullptr);
   fingerprint_view_ = AddChildView(std::make_unique<FingerprintView>());
+  if (available_auth_factors_.Has(AuthInputType::kFingerprint)) {
+    SetFingerprintState(FingerprintState::AVAILABLE_DEFAULT);
+  }
 }
 
 gfx::Size AuthContainerView::CalculatePreferredSize(
@@ -242,6 +245,11 @@ gfx::Size AuthContainerView::CalculatePreferredSize(
 
   if (pin_status_->GetVisible()) {
     preferred_height += pin_status_->GetPreferredSize(available_size).height();
+  }
+
+  if (fingerprint_view_->GetVisible()) {
+    preferred_height +=
+        fingerprint_view_->GetPreferredSize(available_size).height();
   }
 
   if (switch_button_->GetVisible()) {

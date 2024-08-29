@@ -35,7 +35,13 @@ SKIP_GN_ISOLATE_MAP_TARGETS = {
 
     # These targets are used by builders setting their tests in starlark
     'android_lint',
+    'cast_base_junit_tests',
+    'cast_junit_test_lists',
+    'cast_shell_apk',
+    'cast_shell_junit_tests',
     'cast_test_lists',
+    'check_chrome_static_initializers',
+    'monochrome_public_test_ar_apk',
     'telemetry_gpu_integration_test_fuchsia',
 
     # These targets are listed only in build-side recipes.
@@ -150,7 +156,10 @@ def main():
   parser = argparse.ArgumentParser(description=sys.modules[__name__].__doc__)
   parser.parse_args()
 
-  with open(os.path.join(THIS_DIR, 'gn_isolate_map.pyl')) as fp:
+  gn_isolate_map_pyl_path = os.path.normpath(
+      os.path.join(THIS_DIR, '..', '..', 'infra', 'config', 'generated',
+                   'testing', 'gn_isolate_map.pyl'))
+  with open(gn_isolate_map_pyl_path) as fp:
     gn_isolate_map = ast.literal_eval(fp.read())
     ninja_targets = {k: v['label'] for k, v in gn_isolate_map.items()}
 

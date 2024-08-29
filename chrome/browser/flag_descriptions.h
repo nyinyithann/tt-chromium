@@ -2004,8 +2004,8 @@ extern const char kSiteInstanceGroupsForDataUrlsDescription[];
 extern const char kSiteSearchSettingsPolicyName[];
 extern const char kSiteSearchSettingsPolicyDescription[];
 
-extern const char kDesktopPWAsUserLinkCapturingName[];
-extern const char kDesktopPWAsUserLinkCapturingDescription[];
+extern const char kPwaNavigationCapturingName[];
+extern const char kPwaNavigationCapturingDescription[];
 #endif
 
 extern const char kSkiaRendererName[];
@@ -2060,9 +2060,6 @@ extern const char kSyncAutofillWalletUsageDataDescription[];
 
 extern const char kSyncSandboxName[];
 extern const char kSyncSandboxDescription[];
-
-extern const char kSyncSessionOnVisibilityChangedName[];
-extern const char kSyncSessionOnVisibilityChangedDescription[];
 
 extern const char kSyncTrustedVaultPassphrasePromoName[];
 extern const char kSyncTrustedVaultPassphrasePromoDescription[];
@@ -2138,6 +2135,11 @@ extern const char kTintCompositedContentDescription[];
 extern const char kToolbarPinningFlagId[];
 extern const char kToolbarPinningName[];
 extern const char kToolbarPinningDescription[];
+#endif
+
+#if !BUILDFLAG(IS_ANDROID)
+extern const char kTopChromeToastsName[];
+extern const char kTopChromeToastsDescription[];
 #endif
 
 extern const char kTopChromeTouchUiName[];

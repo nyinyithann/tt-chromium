@@ -24,6 +24,33 @@
   "     expire, use `never`. A bug will be filed for removing expired suites. ",
 
   {
+    "prefix": "verify-minimal-resource-request-kill-switch",
+    "platforms": ["Linux"],
+    "bases": [
+      "http/tests/cache",
+      "http/tests/devtools",
+      "http/tests/fetch",
+      "http/tests/inspector-protocol",
+      "http/tests/loading",
+      "http/tests/prefetch",
+      "http/tests/preload",
+      "http/tests/security",
+      "http/tests/streams",
+      "http/tests/xmlhttprequest",
+      "external/wpt/content-security-policy/",
+      "external/wpt/cors",
+      "external/wpt/fetch",
+      "external/wpt/loading",
+      "external/wpt/preload",
+      "external/wpt/streams",
+      "external/wpt/webtransport"],
+    "args": [
+      "--disable-features=MinimimalResourceRequestPrepBeforeCacheLookup"
+    ],
+    "owners": ["sky@google.com"],
+    "expires": "Nov 1, 2024"
+  },
+  {
     "prefix": "pna-permission",
     "platforms": ["Linux", "Mac", "Win"],
     "bases": ["external/wpt/fetch/private-network-access"],
@@ -280,6 +307,7 @@
   },
   {
     "prefix": "gpu-rasterization",
+    "owners": ["vasilyt@chromium.org", "chrome-gpu@google.com"],
     "platforms": ["Linux", "Mac", "Win"],
     "bases": ["images",
               "external/wpt/css/css-images/gradient"],
@@ -381,6 +409,7 @@
   },
   {
     "prefix": "media-gpu-accelerated",
+    "owners": ["media-dev@chromium.org", "dalecurtis@chromium.org"],
     "platforms": ["Linux", "Mac", "Win", "Fuchsia"],
     "bases": ["external/wpt/media-source",
               "media"],
@@ -560,6 +589,7 @@
   },
   {
     "prefix": "speech-with-unified-autoplay",
+    "owners": ["media-dev@chromium.org", "evliu@chromium.org"],
     "platforms": ["Linux", "Mac", "Win"],
     "bases": ["external/wpt/speech-api"],
     "args": ["--autoplay-policy=document-user-activation-required"],
@@ -567,6 +597,7 @@
   },
   {
     "prefix": "unified-autoplay",
+    "owners": ["media-dev@chromium.org", "evliu@chromium.org"],
     "platforms": ["Linux", "Mac", "Win"],
     "bases": ["external/wpt/feature-policy"],
     "args": ["--autoplay-policy=document-user-activation-required"],
@@ -829,7 +860,8 @@
     "bases": [ "external/wpt/css/css-ui/pointer-events-no-scrollbars-001.html",
                "external/wpt/css/css-ui/pointer-events-no-scrollbars-002.html"],
     "args": ["--enable-features=OverlayScrollbar"],
-    "expires": "never"
+    "expires": "never",
+    "owners": ["wangxianzhu@chromium.org"]
   },
   "The elastic-overscroll virtual suite is testing a feature that is enabled",
   "or not based on platform and settings, so it should not expire.",
@@ -849,7 +881,8 @@
     "platforms": ["Linux", "Mac", "Win"],
     "bases": [],
     "args": ["--disable-features=OverlayScrollbar"],
-    "expires": "never"
+    "expires": "never",
+    "owners": ["gastonr@microsoft.com", "gerchiko@microsoft.com", "yshalivskyy@microsoft.com"]
   },
   {
     "prefix": "fluent-non-overlay-scrollbar",
@@ -1563,18 +1596,6 @@
     "expires": "Jul 1, 2025"
   },
   {
-    "prefix": "lcp-multiple-updates-per-element",
-    "owners": ["haoliuk@chromium.org", "iclelland@chromium.org"],
-    "platforms": ["Linux", "Mac", "Win"],
-    "bases": [
-      "external/wpt/largest-contentful-paint/update-on-style-change.tentative.html"
-    ],
-    "args": [
-      "--enable-features=LCPMultipleUpdatesPerElement"
-    ],
-    "expires": "Jul 1, 2024"
-  },
-  {
     "prefix": "low-priority-async-script-execution",
     "platforms": ["Linux", "Mac", "Win"],
     "exclusive_tests": "ALL",
@@ -1780,6 +1801,7 @@
   },
   {
     "prefix": "force-in-order-script",
+    "owners": ["sisidovski@chromium.org"],
     "platforms": ["Linux", "Mac", "Win"],
     "bases": ["wpt_internal/in-order-script-scheduling/force-in-order"],
     "args": [
@@ -1789,6 +1811,7 @@
   },
   {
     "prefix": "selective-in-order-script",
+    "owners": ["sisidovski@chromium.org"],
     "platforms": ["Linux", "Mac", "Win"],
     "bases": ["wpt_internal/in-order-script-scheduling/selective-in-order"],
     "args": [
@@ -3297,6 +3320,9 @@
     "prefix": "select-parser-relaxation",
     "platforms": ["Linux"],
     "bases": [
+      "accessibility/aria-hidden-select.html",
+      "accessibility/native-select-activedescendant.html",
+      "accessibility/role-attribute.html",
       "fast/events/select-element.html",
       "external/wpt/css/css-writing-modes/forms/select-appearance-native-computed-style.html",
       "external/wpt/css/css-writing-modes/forms/select-appearance-native-horizontal.optional.html",
@@ -3323,6 +3349,9 @@
     "prefix": "stylable-select-disabled",
     "platforms": ["Linux", "Mac", "Win"],
     "bases": [
+      "accessibility/aria-hidden-select.html",
+      "accessibility/native-select-activedescendant.html",
+      "accessibility/role-attribute.html",
       "external/wpt/css/css-writing-modes/forms/select-appearance-native-computed-style.html",
       "external/wpt/css/css-writing-modes/forms/select-appearance-native-horizontal.optional.html",
       "external/wpt/css/css-writing-modes/forms/select-appearance-native-vertical.optional.html",
@@ -3550,6 +3579,7 @@
     "bases": [
       "external/wpt/css/css-values/attr-color-invalid-cast.html",
       "external/wpt/css/css-values/attr-color-valid.html",
+      "external/wpt/css/css-values/attr-container-style-query.html",
       "external/wpt/css/css-values/attr-in-max.html",
       "external/wpt/css/css-values/attr-invalidation.html",
       "external/wpt/css/css-values/attr-length-invalid-cast.html",

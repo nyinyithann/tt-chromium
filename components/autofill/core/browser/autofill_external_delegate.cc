@@ -6,6 +6,7 @@
 
 #include <stddef.h>
 
+#include <functional>
 #include <optional>
 #include <utility>
 
@@ -73,13 +74,6 @@ const AutofillProfile* GetTestAddressByGUID(
   }
   auto it = base::ranges::find(test_addresses, guid, &AutofillProfile::guid);
   return it == test_addresses.end() ? nullptr : &(*it);
-}
-
-// Returns true if the suggestion entry is an Autofill warning message.
-// Warning messages should display on top of suggestion list.
-bool IsAutofillWarningEntry(SuggestionType type) {
-  return type == SuggestionType::kInsecureContextPaymentDisabledMessage ||
-         type == SuggestionType::kMixedFormMessage;
 }
 
 // The `AutofillTriggerSource` indicates what caused an Autofill fill or preview
@@ -152,6 +146,22 @@ const Suggestion* FindTestSuggestion(AutofillClient& client,
     }
   }
   return nullptr;
+}
+
+// Removes the warning suggestions if `suggestions` also contains suggestions
+// that are not a warning.
+void PossiblyRemoveAutofillWarnings(std::vector<Suggestion>& suggestions) {
+  auto is_warning = [](const Suggestion& suggestion) {
+    const SuggestionType type = suggestion.type;
+    return type == SuggestionType::kInsecureContextPaymentDisabledMessage ||
+           type == SuggestionType::kMixedFormMessage;
+  };
+  if (std::ranges::find_if(suggestions, std::not_fn(is_warning)) ==
+      suggestions.end()) {
+    return;
+  }
+
+  std::erase_if(suggestions, is_warning);
 }
 
 }  // namespace
@@ -261,29 +271,11 @@ void AutofillExternalDelegate::OnSuggestionsReturned(
 #endif
 
   std::vector<Suggestion> suggestions(input_suggestions);
-
-  // Hide warnings as appropriate.
-  PossiblyRemoveAutofillWarnings(&suggestions);
-
-  // TODO(crbug.com/320126773): consider moving these metrics to a better place.
-  if (base::ranges::any_of(suggestions, [](const Suggestion& suggestion) {
-        return suggestion.type == SuggestionType::kShowAccountCards;
-      })) {
-    autofill_metrics::LogAutofillShowCardsFromGoogleAccountButtonEventMetric(
-        autofill_metrics::ShowCardsFromGoogleAccountButtonEvent::
-            kButtonAppeared);
-    if (!show_cards_from_account_suggestion_was_shown_) {
-      show_cards_from_account_suggestion_was_shown_ = true;
-      autofill_metrics::LogAutofillShowCardsFromGoogleAccountButtonEventMetric(
-          autofill_metrics::ShowCardsFromGoogleAccountButtonEvent::
-              kButtonAppearedOnce);
-    }
-  }
-
+  PossiblyRemoveAutofillWarnings(suggestions);
   // If anything else is added to modify the values after inserting the data
   // list, AutofillPopupControllerImpl::UpdateDataListValues will need to be
   // updated to match.
-  InsertDataListValues(&suggestions);
+  InsertDataListValues(suggestions);
 
   if (suggestions.empty()) {
     OnAutofillAvailabilityEvent(
@@ -427,6 +419,18 @@ void AutofillExternalDelegate::OnSuggestionsShown() {
 
   manager_->DidShowSuggestions(shown_suggestion_types_, query_form_,
                                query_field_);
+
+  if (base::Contains(shown_suggestion_types_,
+                     SuggestionType::kShowAccountCards)) {
+    autofill_metrics::LogAutofillShowCardsFromGoogleAccountButtonEventMetric(
+        autofill_metrics::ShowCardsFromGoogleAccountButtonEvent::
+            kButtonAppeared);
+    if (!std::exchange(show_cards_from_account_suggestion_was_shown_, true)) {
+      autofill_metrics::LogAutofillShowCardsFromGoogleAccountButtonEventMetric(
+          autofill_metrics::ShowCardsFromGoogleAccountButtonEvent::
+              kButtonAppearedOnce);
+    }
+  }
 
   if (base::Contains(shown_suggestion_types_,
                      SuggestionType::kScanCreditCard)) {
@@ -1152,48 +1156,39 @@ void AutofillExternalDelegate::FillAutofillFormData(
   }
 }
 
-void AutofillExternalDelegate::PossiblyRemoveAutofillWarnings(
-    std::vector<Suggestion>* suggestions) {
-  while (suggestions->size() > 1 &&
-         IsAutofillWarningEntry(suggestions->front().type) &&
-         !IsAutofillWarningEntry(suggestions->back().type)) {
-    // If we received warnings instead of suggestions from Autofill but regular
-    // suggestions from autocomplete, don't show the Autofill warnings.
-    suggestions->erase(suggestions->begin());
-  }
-}
-
 void AutofillExternalDelegate::InsertDataListValues(
-    std::vector<Suggestion>* suggestions) {
+    std::vector<Suggestion>& suggestions) const {
   if (datalist_.empty()) {
     return;
   }
 
   // Go through the list of autocomplete values and remove them if they are in
   // the list of datalist values.
-  auto datalist_values = base::MakeFlatSet<std::u16string>(
-      datalist_, {}, [](const SelectOption& option) { return option.value; });
-  std::erase_if(*suggestions, [&datalist_values](const Suggestion& suggestion) {
+  auto datalist_values = base::MakeFlatSet<std::u16string_view>(
+      datalist_, {}, [](const SelectOption& option) -> std::u16string_view {
+        return option.value;
+      });
+  std::erase_if(suggestions, [&datalist_values](const Suggestion& suggestion) {
     return suggestion.type == SuggestionType::kAutocompleteEntry &&
-           base::Contains(datalist_values, suggestion.main_text.value);
+           datalist_values.contains(suggestion.main_text.value);
   });
 
-#if !BUILDFLAG(IS_ANDROID)
-  // Insert the separator between the datalist and Autofill/Autocomplete values
-  // (if there are any).
-  if (!suggestions->empty()) {
-    suggestions->insert(suggestions->begin(),
-                        Suggestion(SuggestionType::kSeparator));
+  if constexpr (!BUILDFLAG(IS_ANDROID)) {
+    // Insert the separator between the datalist and Autofill/Autocomplete
+    // values (if there are any).
+    if (!suggestions.empty()) {
+      suggestions.insert(suggestions.begin(),
+                         Suggestion(SuggestionType::kSeparator));
+    }
   }
-#endif
 
   // Insert the datalist elements at the beginning.
-  suggestions->insert(suggestions->begin(), datalist_.size(), Suggestion());
+  suggestions.insert(suggestions.begin(), datalist_.size(),
+                     Suggestion(SuggestionType::kDatalistEntry));
   for (size_t i = 0; i < datalist_.size(); i++) {
-    (*suggestions)[i].main_text =
+    suggestions[i].main_text =
         Suggestion::Text(datalist_[i].value, Suggestion::Text::IsPrimary(true));
-    (*suggestions)[i].labels = {{Suggestion::Text(datalist_[i].text)}};
-    (*suggestions)[i].type = SuggestionType::kDatalistEntry;
+    suggestions[i].labels = {{Suggestion::Text(datalist_[i].text)}};
   }
 }
 

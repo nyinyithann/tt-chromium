@@ -801,6 +801,16 @@ chromium-metrics-reviews@google.com.
   </summary>
 </histogram>
 
+<histogram name="Ash.Auth.ActiveSessionAuthFingerprintAttempt" units="attempts"
+    expires_after="2025-08-02">
+  <owner>iscsi@google.com</owner>
+  <owner>cros-lurs@google.com</owner>
+  <summary>
+    The number of fingerprint attempts while the active session auth dialog was
+    opened. Recorded when the active session auth dialog closes.
+  </summary>
+</histogram>
+
 <histogram name="Ash.Auth.ActiveSessionAuthOpenDuration" units="ms"
     expires_after="2025-08-02">
   <owner>iscsi@google.com</owner>
@@ -3650,7 +3660,7 @@ chromium-metrics-reviews@google.com.
 </histogram>
 
 <histogram name="Ash.EssentialSearch.Status" enum="EssentialSearchStatus"
-    expires_after="2024-08-30">
+    expires_after="2025-02-28">
   <owner>ayag@chromium.org</owner>
   <owner>mohammedabdon@chromium.org</owner>
   <owner>cros-3pidp@google.com</owner>

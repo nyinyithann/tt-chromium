@@ -10877,6 +10877,10 @@ Called by update_use_counter_feature_enum.py.-->
       label="V8Performance_Memory_AttributeGetter_NotLockedToSite"/>
   <int value="5074" label="PartitionedPopin_OpenAttempt"/>
   <int value="5075" label="PartitionedPopin_Opened"/>
+  <int value="5076" label="V8AISummarizer_SharedContext_AttributeGetter"/>
+  <int value="5077" label="V8AISummarizer_Type_AttributeGetter"/>
+  <int value="5078" label="V8AISummarizer_Format_AttributeGetter"/>
+  <int value="5079" label="V8AISummarizer_Length_AttributeGetter"/>
 </enum>
 
 <!-- LINT.ThenChange(//third_party/blink/public/mojom/use_counter/metrics/web_feature.mojom:WebFeature) -->
@@ -12293,6 +12297,7 @@ Called by update_permissions_policy_enum.py.-->
   <int value="-2147167996" label="ITF_E_EXTRACT_NO_FAMILY_NAME"/>
   <int value="-2147167231" label="DRM_E_XB_INVALID_OBJECT"/>
   <int value="-2147167228" label="DRM_E_XB_UNKNOWN_ELEMENT_TYPE"/>
+  <int value="-2147165581" label="DRM_E_H264_SH_PPS_NOT_FOUND"/>
   <int value="-2147164882" label="DRM_E_* - OEM Specific (8004DD2E)"/>
   <int value="-2147164862" label="DRM_E_* - OEM Specific (8004DD42)"/>
   <int value="-2147157503" label="media::kErrorInitializeMediaFoundation"/>
@@ -15856,6 +15861,7 @@ from previous Chrome versions.
   <int value="-1981692093"
       label="SafeBrowsingPasswordProtectionForSignedInUsers:enabled"/>
   <int value="-1980328793" label="trace-upload-url"/>
+  <int value="-1978938699" label="PwaNavigationCapturing:disabled"/>
   <int value="-1978625006" label="PcieBillboardNotification:disabled"/>
   <int value="-1978116081" label="SeaPen:disabled"/>
   <int value="-1978003156" label="EnableExtensibleEnterpriseSSO:disabled"/>
@@ -16607,6 +16613,7 @@ from previous Chrome versions.
   <int value="-1655535052" label="enable-pointer-events"/>
   <int value="-1655495554" label="NtpCalendarModule:disabled"/>
   <int value="-1655281250" label="DefaultCalculatorWebApp:enabled"/>
+  <int value="-1654902085" label="PwaNavigationCapturing:enabled"/>
   <int value="-1654476091" label="cast-streaming-force-enable-hardware-vp8"/>
   <int value="-1654344175" label="disable-extension-info-dialog"/>
   <int value="-1653991213" label="CrossOriginIsolated:disabled"/>
@@ -19719,7 +19726,6 @@ from previous Chrome versions.
   <int value="-360453785" label="LeftToRightUrls:disabled"/>
   <int value="-360038744" label="invert-viewport-scroll-order"/>
   <int value="-359886807" label="AppPreloadService:disabled"/>
-  <int value="-359878424" label="AntiFingerprintingSetting:disabled"/>
   <int value="-359452972" label="ProjectorV2:enabled"/>
   <int value="-359331504" label="InputDeviceSettingsSplit:enabled"/>
   <int value="-357464687" label="SharingPreferVapid:enabled"/>
@@ -20045,6 +20051,7 @@ from previous Chrome versions.
   <int value="-231426350" label="AutofillEnableToolbarStatusChip:enabled"/>
   <int value="-230824955" label="NTPMostLikelyFaviconsFromServer:enabled"/>
   <int value="-229995076" label="AltClickAndSixPackCustomization:disabled"/>
+  <int value="-228933177" label="ToastFramework:disabled"/>
   <int value="-228847300" label="OmniboxLimitKeywordModeSuggestions:disabled"/>
   <int value="-227261557" label="CrosSodaConchLanguages:enabled"/>
   <int value="-226826278" label="ForceEnableFastCheckoutCapabilities:disabled"/>
@@ -21301,7 +21308,6 @@ from previous Chrome versions.
   <int value="299792415" label="OmniboxSuggestionTransparencyOptions:enabled"/>
   <int value="300095239" label="FCMInvalidations:enabled"/>
   <int value="300870732" label="ShelfDimming:disabled"/>
-  <int value="301196825" label="AntiFingerprintingSetting:enabled"/>
   <int value="301513718" label="PrivacySandboxSettings4:enabled"/>
   <int value="301536977" label="DetailedLanguageSettings:enabled"/>
   <int value="301630312" label="ForcedColors:disabled"/>
@@ -22349,6 +22355,7 @@ from previous Chrome versions.
   <int value="732081309" label="ReadAloudLanguagePackDownloading:disabled"/>
   <int value="732703958" label="enable-gesture-tap-highlight"/>
   <int value="733484229" label="PrivacyGuide3:disabled"/>
+  <int value="734892932" label="ToastFramework:enabled"/>
   <int value="734900932" label="RecurrentInterstitialFeature:enabled"/>
   <int value="735180038"
       label="AccessibilitySelectToSpeakHoverTextImprovements:disabled"/>
@@ -22659,7 +22666,6 @@ from previous Chrome versions.
   <int value="864024033" label="IsolatePrerendersMustProbeOrigin:enabled"/>
   <int value="865096806" label="CrosMall:disabled"/>
   <int value="865952257" label="CrOSLateBootBluetoothTelephony:disabled"/>
-  <int value="866313743" label="FingerprintingProtectionSetting:enabled"/>
   <int value="866536801" label="PDFViewerUpdate:disabled"/>
   <int value="867061581" label="AllowWindowDragUsingSystemDragDrop:enabled"/>
   <int value="867512869" label="mark-non-secure-as"/>
@@ -22739,7 +22745,6 @@ from previous Chrome versions.
   <int value="900560795"
       label="HttpsFirstModeV2ForTypicallySecureUsers:disabled"/>
   <int value="900614020" label="ContentSuggestionsShowSummary:disabled"/>
-  <int value="900642009" label="FingerprintingProtectionSetting:disabled"/>
   <int value="902209599" label="ShelfHotseat:enabled"/>
   <int value="902442795" label="time-before-discard-in-minutes"/>
   <int value="902649149" label="ArcGhostWindowNewStyle:enabled"/>
@@ -25966,6 +25971,8 @@ from previous Chrome versions.
   <int value="2" label="Valid URL"/>
 </enum>
 
+<!-- LINT.IfChange(MappedCSSProperties) -->
+
 <enum name="MappedCSSProperties">
 <!-- Generated from third_party/blink/public/mojom/use_counter/metrics/css_property_id.mojom.
 Called by update_use_counter_css.py.-->
@@ -26778,6 +26785,8 @@ Called by update_use_counter_css.py.-->
   <int value="806" label="text-wrap-style"/>
   <int value="807" label="masonry-track"/>
 </enum>
+
+<!-- LINT.ThenChange(//third_party/blink/public/mojom/use_counter/metrics/css_property_id.mojom:CSSSampleId) -->
 
 <enum name="MediaEncryptionType">
   <int value="0" label="None"/>
@@ -28936,6 +28945,8 @@ Called by update_net_error_codes.py.-->
   <int value="95" label="EOPNOTSUPP/_/_">
     Operation not supported on transport endpoint on Linux.
   </int>
+  <int value="103" label="ECONNABORTED">Software caused connection abort</int>
+  <int value="107" label="ENOTCONN">Transport endpoint is not connected</int>
   <int value="116" label="ESTALE">Stale file handle</int>
   <int value="117" label="EUCLEAN">Structure needs cleaning</int>
   <int value="122" label="EDQUOT/_/_">Quota exceeeded on Linux.</int>
@@ -34099,6 +34110,8 @@ This is true even if the type has been removed from the mojom file.
   <int value="9" label="kFailedToCommitInitTransaction"/>
 </enum>
 
+<!-- LINT.IfChange(WebDXFeatureObserver) -->
+
 <enum name="WebDXFeatureObserver">
 <!-- Generated from third_party/blink/public/mojom/use_counter/metrics/webdx_feature.mojom.
 Called by update_use_counter_feature_enum.py.-->
@@ -34211,7 +34224,12 @@ Called by update_use_counter_feature_enum.py.-->
   <int value="105" label="WebBluetooth"/>
   <int value="106" label="WebNfc"/>
   <int value="107" label="DRAFT_Serial"/>
+  <int value="108" label="JsModulesServiceWorkers"/>
+  <int value="109" label="JsModulesSharedWorkers"/>
+  <int value="110" label="JsModulesWorkers"/>
 </enum>
+
+<!-- LINT.ThenChange(//third_party/blink/public/mojom/use_counter/metrics/webdx_feature.mojom:WebDXFeature) -->
 
 <enum name="WebFontCacheHit">
   <int value="0" label="Miss"/>

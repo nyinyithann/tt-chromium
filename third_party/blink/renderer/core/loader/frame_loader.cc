@@ -99,6 +99,7 @@
 #include "third_party/blink/renderer/core/loader/progress_tracker.h"
 #include "third_party/blink/renderer/core/navigation_api/navigation_api.h"
 #include "third_party/blink/renderer/core/page/chrome_client.h"
+#include "third_party/blink/renderer/core/page/focus_controller.h"
 #include "third_party/blink/renderer/core/page/frame_tree.h"
 #include "third_party/blink/renderer/core/page/page.h"
 #include "third_party/blink/renderer/core/page/plugin_data.h"
@@ -398,6 +399,8 @@ void FrameLoader::DispatchUnloadEventAndFillOldDocumentInfoIfNeeded(
     old_document_info->frame_scheduler_unreported_task_time =
         scheduler->UnreportedTaskTime();
   }
+  old_document_info->was_focused_frame =
+      (frame_->GetPage()->GetFocusController().FocusedFrame() == frame_);
 
   frame_->GetDocument()->DispatchUnloadEvents(
       &old_document_info->unload_timing_info);
@@ -1100,8 +1103,12 @@ void FrameLoader::CommitNavigation(
   if (commit_reason == CommitReason::kXSLT ||
       commit_reason == CommitReason::kJavascriptUrl ||
       commit_reason == CommitReason::kDiscard) {
+    // It is important to clone the previous loader's ExtraData instead of
+    // extracting it since it may be needed to handle operations in the
+    // document's unload handler (such as same-site navigation, see
+    // crbug.com/361658816).
     DCHECK(!extra_data);
-    extra_data = document_loader_->TakeExtraData();
+    extra_data = document_loader_->CloneExtraData();
   }
 
   // Create the OldDocumentInfoForCommit for the old document (that might be in

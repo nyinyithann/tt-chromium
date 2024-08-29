@@ -1603,6 +1603,11 @@ BASE_FEATURE(kSameAppWindowCycle,
 // settings to default.
 BASE_FEATURE(kSanitize, "CrosSanitize", base::FEATURE_DISABLED_BY_DEFAULT);
 
+// When enabled, `SmbService` is created on user session startup task completed.
+BASE_FEATURE(kSmbServiceIsCreatedOnUserSessionStartUpTaskCompleted,
+             "SmbServiceIsCreatedOnUserSessionStartUpTaskCompleted",
+             base::FEATURE_DISABLED_BY_DEFAULT);
+
 // Controls whether the snooping protection prototype is enabled.
 BASE_FEATURE(kSnoopingProtection,
              "SnoopingProtection",
@@ -2244,10 +2249,10 @@ BASE_FEATURE(kOrcaElaborate, "OrcaElaborate", base::FEATURE_ENABLED_BY_DEFAULT);
 // Enables or disables emojify for Orca.
 BASE_FEATURE(kOrcaEmojify, "OrcaEmojify", base::FEATURE_ENABLED_BY_DEFAULT);
 
-// If enabled, the enablement of Orca feature is also driven by the policy.
-BASE_FEATURE(kOrcaControlledByPolicy,
-             "OrcaControlledByPolicy",
-             base::FEATURE_DISABLED_BY_DEFAULT);
+// Enables or disables Orca for managed users.
+BASE_FEATURE(kOrcaForManagedUsers,
+             "kOrcaForManagedUsers",
+             base::FEATURE_ENABLED_BY_DEFAULT);
 
 // Enables or disables formalize for Orca.
 BASE_FEATURE(kOrcaFormalize, "OrcaFormalize", base::FEATURE_ENABLED_BY_DEFAULT);

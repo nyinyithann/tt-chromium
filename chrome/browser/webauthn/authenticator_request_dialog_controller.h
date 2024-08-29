@@ -63,10 +63,6 @@ class AuthenticatorRequestDialogController
   // is only resolved after the UI is dismissed.
   bool is_request_complete() const;
 
-  const std::optional<std::string>& selected_authenticator_id() const {
-    return ephemeral_state_.selected_authenticator_id_;
-  }
-
   // Starts the UX flow, by either showing the transport selection screen or
   // the guided flow for them most likely transport.
   //
@@ -379,10 +375,6 @@ class AuthenticatorRequestDialogController
     EphemeralState& operator=(EphemeralState&&);
     ~EphemeralState();
 
-    // Represents the id of the Bluetooth authenticator that the user is trying
-    // to connect to or conduct WebAuthN request to via the WebAuthN UI.
-    std::optional<std::string> selected_authenticator_id_;
-
     // Stores a list of |AuthenticatorReference| values such that a request can
     // be dispatched dispatched after some UI interaction. This is useful for
     // platform authenticators (and Windows) where dispatch to the authenticator
@@ -393,9 +385,10 @@ class AuthenticatorRequestDialogController
     // authenticator has responded to a request.
     std::vector<device::AuthenticatorGetAssertionResponse> responses_;
 
-    // did_dispatch_to_icloud_keychain_ is true if iCloud Keychain has been
-    // triggered.
-    bool did_dispatch_to_icloud_keychain_ = false;
+    // When a request has been dispatched to a platform authenticator, this
+    // contains the `AuthenticatorType`. std::nullopt at all other times.
+    std::optional<device::AuthenticatorType>
+        dispatched_platform_authenticator_type_ = std::nullopt;
 
     // did_invoke_platform_despite_no_priority_mechanism_ is true if a platform
     // authenticator was triggered despite there not being a

@@ -16,33 +16,32 @@
 TestProfileManagerIOS::TestProfileManagerIOS()
     : profile_attributes_storage_(GetApplicationContext()->GetLocalState()),
       data_dir_(base::CreateUniqueTempDirectoryScopedToTest()) {
-  CHECK_EQ(GetApplicationContext()->GetChromeBrowserStateManager(), nullptr);
-  TestingApplicationContext::GetGlobal()->SetChromeBrowserStateManager(this);
+  CHECK_EQ(GetApplicationContext()->GetProfileManager(), nullptr);
+  TestingApplicationContext::GetGlobal()->SetProfileManager(this);
 }
 
 TestProfileManagerIOS::~TestProfileManagerIOS() {
-  CHECK_EQ(GetApplicationContext()->GetChromeBrowserStateManager(), this);
+  CHECK_EQ(GetApplicationContext()->GetProfileManager(), this);
 
   // Notify observers before unregistering from ApplicationContext.
   for (auto& observer : observers_) {
-    observer.OnChromeBrowserStateManagerDestroyed(this);
+    observer.OnProfileManagerDestroyed(this);
   }
 
-  TestingApplicationContext::GetGlobal()->SetChromeBrowserStateManager(nullptr);
+  TestingApplicationContext::GetGlobal()->SetProfileManager(nullptr);
 }
 
-void TestProfileManagerIOS::AddObserver(
-    ChromeBrowserStateManagerObserver* observer) {
+void TestProfileManagerIOS::AddObserver(ProfileManagerObserverIOS* observer) {
   observers_.AddObserver(observer);
 
   for (auto& [key, browser_state] : browser_states_) {
-    observer->OnChromeBrowserStateCreated(this, browser_state.get());
-    observer->OnChromeBrowserStateLoaded(this, browser_state.get());
+    observer->OnProfileCreated(this, browser_state.get());
+    observer->OnProfileLoaded(this, browser_state.get());
   }
 }
 
 void TestProfileManagerIOS::RemoveObserver(
-    ChromeBrowserStateManagerObserver* observer) {
+    ProfileManagerObserverIOS* observer) {
   observers_.RemoveObserver(observer);
 }
 
@@ -70,16 +69,16 @@ TestProfileManagerIOS::GetLoadedBrowserStates() {
 
 bool TestProfileManagerIOS::LoadBrowserStateAsync(
     std::string_view name,
-    ChromeBrowserStateLoadedCallback initialized_callback,
-    ChromeBrowserStateLoadedCallback created_callback) {
+    ProfileLoadedCallback initialized_callback,
+    ProfileLoadedCallback created_callback) {
   return CreateBrowserStateAsync(name, std::move(initialized_callback),
                                  std::move(created_callback));
 }
 
 bool TestProfileManagerIOS::CreateBrowserStateAsync(
     std::string_view name,
-    ChromeBrowserStateLoadedCallback initialized_callback,
-    ChromeBrowserStateLoadedCallback created_callback) {
+    ProfileLoadedCallback initialized_callback,
+    ProfileLoadedCallback created_callback) {
   auto iterator = browser_states_.find(name);
   if (iterator == browser_states_.end()) {
     // Creation is not supported by TestProfileManagerIOS.
@@ -135,11 +134,11 @@ TestProfileManagerIOS::AddBrowserStateWithBuilder(
   }
 
   for (auto& observer : observers_) {
-    observer.OnChromeBrowserStateCreated(this, iterator->second.get());
+    observer.OnProfileCreated(this, iterator->second.get());
   }
 
   for (auto& observer : observers_) {
-    observer.OnChromeBrowserStateLoaded(this, iterator->second.get());
+    observer.OnProfileLoaded(this, iterator->second.get());
   }
 
   return iterator->second.get();

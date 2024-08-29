@@ -77,7 +77,6 @@ public class DataSharingTabManagerUnitTest {
     @Before
     public void setUp() {
         DataSharingServiceFactory.setForTesting(mDataSharingService);
-        DataSharingServiceFactory.setDataSharingUIDelegateForTesting(mDataSharingUIDelegate);
         TabGroupSyncServiceFactory.setForTesting(mTabGroupSyncService);
         ObservableSupplier<Profile> profileSupplier = new ObservableSupplierImpl<Profile>(mProfile);
         Supplier<BottomSheetController> bottomSheetControllerSupplier =
@@ -98,6 +97,9 @@ public class DataSharingTabManagerUnitTest {
         mSavedTabGroup.savedTabs.add(savedTabGroupTab);
 
         mActivityScenarioRule.getScenario().onActivity(this::onActivityCreated);
+
+        doReturn(mDataSharingUIDelegate).when(mDataSharingService).getUIDelegate();
+        doReturn(mProfile).when(mProfile).getOriginalProfile();
     }
 
     private void onActivityCreated(Activity activity) {
@@ -114,7 +116,6 @@ public class DataSharingTabManagerUnitTest {
 
     @Test
     public void testInviteFlowWithExistingTabGroup() {
-        doReturn(mProfile).when(mProfile).getOriginalProfile();
         doReturn(
                         new DataSharingService.ParseURLResult(
                                 new GroupToken(GROUP_ID, "accessToken"), ParseURLStatus.SUCCESS))
@@ -132,7 +133,6 @@ public class DataSharingTabManagerUnitTest {
 
     @Test
     public void testInviteFlowWithNewTabGroup() {
-        doReturn(mProfile).when(mProfile).getOriginalProfile();
         doReturn(
                         new DataSharingService.ParseURLResult(
                                 new GroupToken(GROUP_ID, ACCESS_TOKEN), ParseURLStatus.SUCCESS))

@@ -49,6 +49,10 @@ interface AIRewriterFactory
     method create
 interface AISummarizer
     attribute @@toStringTag
+    getter format
+    getter length
+    getter sharedContext
+    getter type
     method constructor
     method destroy
     method summarize
@@ -7000,6 +7004,7 @@ interface Observable
     method inspect
     method last
     method map
+    method reduce
     method some
     method subscribe
     method switchMap

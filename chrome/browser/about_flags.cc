@@ -62,6 +62,7 @@
 #include "chrome/browser/site_isolation/about_flags.h"
 #include "chrome/browser/tpcd/experiment/tpcd_experiment_features.h"
 #include "chrome/browser/ui/browser_navigator_params.h"
+#include "chrome/browser/ui/toasts/toast_features.h"
 #include "chrome/browser/ui/ui_features.h"
 #include "chrome/browser/unexpire_flags.h"
 #include "chrome/browser/unexpire_flags_gen.h"
@@ -881,6 +882,23 @@ const FeatureEntry::Choice kTopChromeTouchUiChoices[] = {
      switches::kTopChromeTouchUiDisabled},
     {flags_ui::kGenericExperimentChoiceEnabled, switches::kTopChromeTouchUi,
      switches::kTopChromeTouchUiEnabled}};
+
+#if !BUILDFLAG(IS_ANDROID)
+const FeatureEntry::FeatureParam kToastWith8Seconds[] = {
+    {"toast_timeout", "8s"},
+    {"toast_demo_mode", "true"}};
+const FeatureEntry::FeatureParam kToastWith10Seconds[] = {
+    {"toast_timeout", "10s"},
+    {"toast_demo_mode", "true"}};
+const FeatureEntry::FeatureParam kToastWith12Seconds[] = {
+    {"toast_timeout", "12s"},
+    {"toast_demo_mode", "true"}};
+
+const FeatureEntry::FeatureVariation kToastVariations[] = {
+    {"with 8s", kToastWith8Seconds, std::size(kToastWith8Seconds), nullptr},
+    {"with 10s", kToastWith10Seconds, std::size(kToastWith10Seconds), nullptr},
+    {"with 12s", kToastWith12Seconds, std::size(kToastWith12Seconds), nullptr}};
+#endif
 
 #if BUILDFLAG(IS_CHROMEOS_ASH)
 
@@ -3686,28 +3704,26 @@ const flags_ui::FeatureEntry::FeatureVariation
 
 #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN) || \
     BUILDFLAG(IS_CHROMEOS)
+const flags_ui::FeatureEntry::FeatureParam kPwaNavigationCapturingDefaultOn[] =
+    {{"link_capturing_state", "on_by_default"}};
+const flags_ui::FeatureEntry::FeatureParam kPwaNavigationCapturingDefaultOff[] =
+    {{"link_capturing_state", "off_by_default"}};
 const flags_ui::FeatureEntry::FeatureParam
-    kDesktopPWAsLinkCapturingDefaultOn[] = {
-        {"link_capturing_state", "on_by_default"}};
-const flags_ui::FeatureEntry::FeatureParam
-    kDesktopPWAsLinkCapturingDefaultOff[] = {
-        {"link_capturing_state", "off_by_default"}};
-const flags_ui::FeatureEntry::FeatureParam
-    kDesktopPWAsLinkCapturingReimplDefaultOn[] = {
+    kPwaNavigationCapturingReimplDefaultOn[] = {
         {"link_capturing_state", "reimpl_default_on"}};
 const flags_ui::FeatureEntry::FeatureParam
-    kDesktopPWAsLinkCapturingReimplDefaultOff[] = {
+    kPwaNavigationCapturingReimplDefaultOff[] = {
         {"link_capturing_state", "reimpl_default_off"}};
 const flags_ui::FeatureEntry::FeatureVariation
-    kDesktopPWAsLinkCapturingVariations[] = {
-        {"On by default", kDesktopPWAsLinkCapturingDefaultOn,
-         std::size(kDesktopPWAsLinkCapturingDefaultOn), nullptr},
-        {"Off by default", kDesktopPWAsLinkCapturingDefaultOff,
-         std::size(kDesktopPWAsLinkCapturingDefaultOff), nullptr},
-        {"(Reimpl) On by default", kDesktopPWAsLinkCapturingReimplDefaultOn,
-         std::size(kDesktopPWAsLinkCapturingReimplDefaultOn), nullptr},
-        {"(Reimpl) Off by default", kDesktopPWAsLinkCapturingReimplDefaultOff,
-         std::size(kDesktopPWAsLinkCapturingReimplDefaultOff), nullptr}};
+    kPwaNavigationCapturingVariations[] = {
+        {"On by default", kPwaNavigationCapturingDefaultOn,
+         std::size(kPwaNavigationCapturingDefaultOn), nullptr},
+        {"Off by default", kPwaNavigationCapturingDefaultOff,
+         std::size(kPwaNavigationCapturingDefaultOff), nullptr},
+        {"(Reimpl) On by default", kPwaNavigationCapturingReimplDefaultOn,
+         std::size(kPwaNavigationCapturingReimplDefaultOn), nullptr},
+        {"(Reimpl) Off by default", kPwaNavigationCapturingReimplDefaultOff,
+         std::size(kPwaNavigationCapturingReimplDefaultOff), nullptr}};
 #endif  // BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN) ||
         // BUILDFLAG(IS_CHROMEOS)
 
@@ -4396,6 +4412,15 @@ const FeatureEntry kFeatureEntries[] = {
     {"top-chrome-touch-ui", flag_descriptions::kTopChromeTouchUiName,
      flag_descriptions::kTopChromeTouchUiDescription, kOsDesktop,
      MULTI_VALUE_TYPE(kTopChromeTouchUiChoices)},
+
+#if !BUILDFLAG(IS_ANDROID)
+    {"top-chrome-toasts", flag_descriptions::kTopChromeToastsName,
+     flag_descriptions::kTopChromeToastsDescription, kOsDesktop,
+     FEATURE_WITH_PARAMS_VALUE_TYPE(toast_features::kToastFramework,
+                                    kToastVariations,
+                                    "ToastFramework")},
+#endif
+
 #if BUILDFLAG(ENABLE_WEBUI_TAB_STRIP)
     {flag_descriptions::kWebUITabStripFlagId,
      flag_descriptions::kWebUITabStripName,
@@ -10780,8 +10805,7 @@ const FeatureEntry kFeatureEntries[] = {
      flag_descriptions::kDesktopPWAsUserLinkCapturingScopeExtensionsName,
      flag_descriptions::kDesktopPWAsUserLinkCapturingScopeExtensionsDescription,
      kOsLinux | kOsMac | kOsWin,
-     FEATURE_VALUE_TYPE(
-         features::kDesktopPWAsLinkCapturingWithScopeExtensions)},
+     FEATURE_VALUE_TYPE(features::kPwaNavigationCapturingWithScopeExtensions)},
 
     {"sync-enable-contact-info-data-type-in-transport-mode",
      flag_descriptions::kSyncEnableContactInfoDataTypeInTransportModeName,
@@ -10793,13 +10817,13 @@ const FeatureEntry kFeatureEntries[] = {
 
 #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN) || \
     BUILDFLAG(IS_CHROMEOS)
-    {"enable-user-link-capturing-pwa",
-     flag_descriptions::kDesktopPWAsUserLinkCapturingName,
-     flag_descriptions::kDesktopPWAsUserLinkCapturingDescription,
+    {"enable-user-navigation-capturing-pwa",
+     flag_descriptions::kPwaNavigationCapturingName,
+     flag_descriptions::kPwaNavigationCapturingDescription,
      kOsLinux | kOsMac | kOsWin | kOsCrOS,
-     FEATURE_WITH_PARAMS_VALUE_TYPE(features::kDesktopPWAsLinkCapturing,
-                                    kDesktopPWAsLinkCapturingVariations,
-                                    "DesktopPWAsLinkCapturing")},
+     FEATURE_WITH_PARAMS_VALUE_TYPE(features::kPwaNavigationCapturing,
+                                    kPwaNavigationCapturingVariations,
+                                    "PwaNavigationCapturing")},
 #endif  // BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN) ||
         // BUILDFLAG(IS_CHROMEOS)
 
@@ -11057,11 +11081,6 @@ const FeatureEntry kFeatureEntries[] = {
      flag_descriptions::kCrosSwitcherDescription, kOsCrOS,
      FEATURE_VALUE_TYPE(ash::features::kCrosSwitcher)},
 #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
-
-    {"sync-session-on-visibility-changed",
-     flag_descriptions::kSyncSessionOnVisibilityChangedName,
-     flag_descriptions::kSyncSessionOnVisibilityChangedDescription, kOsAll,
-     FEATURE_VALUE_TYPE(syncer::kSyncSessionOnVisibilityChanged)},
 
 #if !BUILDFLAG(IS_ANDROID)
     {"password-generation-strong-label-experiment",

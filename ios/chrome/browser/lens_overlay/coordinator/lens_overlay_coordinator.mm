@@ -317,11 +317,6 @@
   ];
   sheet.prefersGrabberVisible = YES;
 
-  // TODO(crbug.com/359124093): Temporary workaround as
-  // `presentViewController:` loads the view asynchronously on the main thread.
-  // `_resultViewController` needs to first be loaded to avoid crashing by
-  // calling `setEditView:`.
-  [_resultViewController loadViewIfNeeded];
   [_containerViewController presentViewController:_resultViewController
                                          animated:YES
                                        completion:nil];
@@ -355,7 +350,7 @@
 
   _mediator.omniboxCoordinator = _omniboxCoordinator;
   _mediator.toolbarConsumer = _resultViewController;
-  _resultViewController.omniboxMutator = _mediator;
+  _resultViewController.toolbarMutator = _mediator;
   _omniboxCoordinator.focusDelegate = _mediator;
 }
 

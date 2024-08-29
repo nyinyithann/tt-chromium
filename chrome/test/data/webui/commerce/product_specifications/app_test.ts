@@ -102,6 +102,7 @@ interface AppPromiseValues {
   productInfos: ProductInfo[];
   urlToPriceInsightsInfoMap: Map<string, PriceInsightsInfo>;
   specsSet: ProductSpecificationsSet|null;
+  urlToPageTitleFromHistoryMap: Map<string, string>;
 }
 
 function createAppPromiseValues(overrides?: Partial<AppPromiseValues>):
@@ -114,6 +115,7 @@ function createAppPromiseValues(overrides?: Partial<AppPromiseValues>):
         productInfos: [createProductInfo()],
         urlToPriceInsightsInfoMap: new Map<string, PriceInsightsInfo>(),
         specsSet: null,
+        urlToPageTitleFromHistoryMap: new Map<string, string>(),
       },
       overrides);
 }
@@ -168,6 +170,13 @@ suite('AppTest', () => {
                 createPriceInsightsInfo(),
           });
         });
+    shoppingServiceApi.setResultMapperFor(
+        'getPageTitleFromHistory', (url: Url) => {
+          return Promise.resolve({
+            title:
+                promiseValues.urlToPageTitleFromHistoryMap.get(url.url) ?? '',
+          });
+        });
 
     const appElement = await createAppElement();
     await flushTasks();
@@ -183,6 +192,17 @@ suite('AppTest', () => {
       productSummaryRowTitle: 'summary',
     });
     shoppingServiceApi.reset();
+    shoppingServiceApi.setResultFor(
+        'getProductSpecificationsFeatureState', Promise.resolve({
+          state: {
+            isSyncingTabCompare: true,
+            canLoadFullPageUi: true,
+            canManageSets: true,
+            canFetchData: true,
+            isAllowedForEnterprise: true,
+            isQualityLoggingAllowed: true,
+          },
+        }));
     shoppingServiceApi.setResultFor('getCallbackRouter', callbackRouter);
     shoppingServiceApi.setResultFor(
         'maybeShowProductSpecificationDisclosure',
@@ -194,12 +214,13 @@ suite('AppTest', () => {
     windowProxy.setResultFor('onLine', true);
   });
 
-  test('calls shopping service when there are url params', () => {
+  test('calls shopping service when there are url params', async () => {
     const urlsParam = ['https://example.com/', 'https://example2.com/'];
     router.setResultFor(
         'getCurrentQuery',
         new URLSearchParams('urls=' + JSON.stringify(urlsParam)));
     createAppElement();
+    await shoppingServiceApi.whenCalled('addProductSpecificationsSet');
 
     assertEquals(1, router.getCallCount('getCurrentQuery'));
     assertEquals(
@@ -697,6 +718,48 @@ suite('AppTest', () => {
         ],
         tableColumns);
   });
+
+  test(
+      'uses history page title when available if other titles are unavailable',
+      async () => {
+        const specsProduct = createSpecsProduct({
+          productClusterId: BigInt(123),
+          title: 'foo',
+          summary: [{
+            text: 'product summary',
+            urls: [],
+          }],
+        });
+        const productInfo = createProductInfo({
+          clusterId: BigInt(123),
+          title: 'foo',
+          productUrl: {url: 'https://example.com/'},
+          imageUrl: {url: 'foo.com/image'},
+        });
+        const urlInHistory = 'https://example2.com/';
+        const pageTitleInHistory = 'foo title';
+
+        const promiseValues = createAppPromiseValues({
+          urlsParam: [productInfo.productUrl.url, urlInHistory],
+          specs: createSpecs({
+            products: [specsProduct],
+          }),
+          productInfos: [
+            productInfo,
+            createProductInfo({clusterId: BigInt(0)}),
+          ],
+          urlToPageTitleFromHistoryMap: new Map<string, string>([
+            [productInfo.productUrl.url, 'bar'],
+            [urlInHistory, pageTitleInHistory],
+          ]),
+        });
+        await createAppElementWithPromiseValues(promiseValues);
+
+        const tableColumns = appElement.$.summaryTable.columns;
+        assertEquals(2, tableColumns.length);
+        assertEquals(specsProduct.title, tableColumns[0]!.selectedItem.title);
+        assertEquals(pageTitleInHistory, tableColumns[1]!.selectedItem.title);
+      });
 
   test('reacts to update event, column reordering', async () => {
     // Set up the first product with at least one unique description.
@@ -1383,23 +1446,60 @@ suite('AppTest', () => {
       urlsParam: ['https://example.com/'],
     });
     createAppElementWithPromiseValues(promiseValues);
-    const feedbackButtonPlacholder =
-        appElement.shadowRoot!.querySelector('#feedbackLoading');
-    const feedbackButtons = appElement.$.feedbackButtons;
     appElement.resetMinLoadingAnimationMsForTesting(minLoadingAnimationMs);
     await flushTasks();
+    const feedbackLoading =
+        appElement.shadowRoot!.querySelector('#feedbackLoading');
+    assertTrue(!!feedbackLoading);
+    const feedbackButtons =
+        appElement.shadowRoot!.querySelector('#feedbackButtons');
+    assertTrue(!!feedbackButtons);
 
-    assertTrue(isVisible(feedbackButtonPlacholder));
+    assertTrue(isVisible(feedbackLoading));
     assertFalse(isVisible(feedbackButtons));
 
     // Wait for the loading animation to finish.
     await new Promise(res => setTimeout(res, minLoadingAnimationMs));
 
-    assertFalse(isVisible(feedbackButtonPlacholder));
+    assertFalse(isVisible(feedbackLoading));
     assertTrue(isVisible(feedbackButtons));
   });
 
-  test('shows disclaimer and learn more link', async () => {
+  test('feedback hidden if not allowed', async () => {
+    shoppingServiceApi.setResultFor(
+        'getProductSpecificationsFeatureState', Promise.resolve({
+          state: {
+            isSyncingTabCompare: true,
+            canLoadFullPageUi: true,
+            canManageSets: true,
+            canFetchData: true,
+            isAllowedForEnterprise: true,
+            isQualityLoggingAllowed: false,
+          },
+        }));
+    const minLoadingAnimationMs = 10;
+    const promiseValues = createAppPromiseValues({
+      urlsParam: ['https://example.com/'],
+    });
+    createAppElementWithPromiseValues(promiseValues);
+    await flushTasks();
+    const feedbackLoading =
+        appElement.shadowRoot!.querySelector('#feedbackLoading');
+    const feedbackButtons =
+        appElement.shadowRoot!.querySelector('#feedbackButtons');
+    appElement.resetMinLoadingAnimationMsForTesting(minLoadingAnimationMs);
+
+    assertFalse(isVisible(feedbackLoading));
+    assertFalse(isVisible(feedbackButtons));
+
+    // Wait for the loading animation to finish.
+    await new Promise(res => setTimeout(res, minLoadingAnimationMs));
+
+    assertFalse(isVisible(feedbackLoading));
+    assertFalse(isVisible(feedbackButtons));
+  });
+
+  test('shows learn more link', async () => {
     const testEmail = 'test@gmail.com';
     loadTimeData.overrideValues({userEmail: testEmail});
     const promiseValues = createAppPromiseValues({
@@ -1829,7 +1929,10 @@ suite('AppTest', () => {
     await createAppElementWithPromiseValues(promiseValues);
 
     function updateCrFeedbackButtons(option: CrFeedbackOption) {
-      appElement.$.feedbackButtons.dispatchEvent(
+      const feedbackButtons =
+          appElement.shadowRoot!.querySelector('#feedbackButtons');
+      assertTrue(!!feedbackButtons);
+      feedbackButtons!.dispatchEvent(
           new CustomEvent('selected-option-changed', {
             bubbles: true,
             composed: true,

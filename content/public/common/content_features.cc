@@ -210,7 +210,7 @@ BASE_FEATURE(kCdmStorageDatabase,
 // go/cdm-storage-migration-details for more details.
 BASE_FEATURE(kCdmStorageDatabaseMigration,
              "CdmStorageDatabaseMigration",
-             base::FEATURE_ENABLED_BY_DEFAULT);
+             base::FEATURE_DISABLED_BY_DEFAULT);
 
 // Clear the window.name property for the top-level cross-site navigations that
 // swap BrowsingContextGroups(BrowsingInstances).
@@ -1341,6 +1341,24 @@ BASE_FEATURE(kWebRtcPipeWireCapturer,
              "WebRTCPipeWireCapturer",
              base::FEATURE_ENABLED_BY_DEFAULT);
 #endif  // defined(WEBRTC_USE_PIPEWIRE)
+
+// Default amount of days after which the global navigation capturing IPH
+// guardrails are cleared from storage.
+const base::FeatureParam<int> kNavigationCapturingIPHGuardrailStorageDuration{
+    &kPwaNavigationCapturing, "link_capturing_guardrail_storage_duration", 30};
+
+BASE_FEATURE(kPwaNavigationCapturing,
+             "PwaNavigationCapturing",
+             base::FEATURE_DISABLED_BY_DEFAULT);
+const base::FeatureParam<CapturingState>::Option kNavigationCapturingParams[] =
+    {{CapturingState::kDefaultOn, "on_by_default"},
+     {CapturingState::kDefaultOff, "off_by_default"},
+     {CapturingState::kReimplDefaultOn, "reimpl_default_on"},
+     {CapturingState::kReimplDefaultOff, "reimpl_default_off"}};
+
+const base::FeatureParam<CapturingState> kNavigationCapturingDefaultState{
+    &kPwaNavigationCapturing, "link_capturing_state",
+    CapturingState::kDefaultOn, &kNavigationCapturingParams};
 
 namespace {
 enum class VideoCaptureServiceConfiguration {

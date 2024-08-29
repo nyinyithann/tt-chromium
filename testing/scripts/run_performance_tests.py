@@ -204,6 +204,10 @@ class GtestCommandGenerator(object):
             self._generate_shard_args() + self._get_additional_flags())
 
   @property
+  def ignore_shard_env_vars(self):
+    return self._ignore_shard_env_vars
+
+  @property
   def executable_name(self):
     """Gets the platform-independent name of the executable."""
     return self._override_executable or self._options.executable
@@ -338,7 +342,7 @@ def execute_gtest_perf_test(command_generator,
   # added by _generate_shard_args() and will still use the values of
   # GTEST_SHARD_INDEX and GTEST_TOTAL_SHARDS to run part of the tests.
   # Removing those environment variables as a workaround.
-  if command_generator._ignore_shard_env_vars:
+  if command_generator.ignore_shard_env_vars:
     if 'GTEST_TOTAL_SHARDS' in env:
       env.pop('GTEST_TOTAL_SHARDS')
     if 'GTEST_SHARD_INDEX' in env:
@@ -662,6 +666,12 @@ def copy_map_file_to_out_dir(map_file, isolated_out_dir):
                   os.path.join(isolated_out_dir, 'benchmarks_shard_map.json'))
 
 
+def fetch_binary_path(dependency_name, os_name='linux', arch='x86_64'):
+  if binary_manager.NeedsInit():
+    binary_manager.InitDependencyManager(None)
+  return binary_manager.FetchPath(dependency_name, os_name=os_name, arch=arch)
+
+
 class CrossbenchTest(object):
   """This class is for running Crossbench tests.
 
@@ -690,7 +700,6 @@ class CrossbenchTest(object):
   BENCHMARK_FILESERVERS = {'speedometer_3.0': 'third_party/speedometer/v3.0'}
 
   def __init__(self, options, isolated_out_dir):
-    binary_manager.InitDependencyManager(None)
     self.options = options
     self.isolated_out_dir = isolated_out_dir
     browser_arg = self._get_browser_arg(options.passthrough_args)
@@ -741,8 +750,7 @@ class CrossbenchTest(object):
       # TODO: Use update_wpr library when it supports Crossbench archive files.
       wpr_name = 'crossbench_android_speedometer_3.0_000.wprgo'
     archive = str(PAGE_SETS_DATA / wpr_name)
-    if not (wpr_go := binary_manager.FetchPath(
-        'wpr_go', os_name='linux', arch='x86_64')):
+    if (wpr_go := fetch_binary_path('wpr_go')) is None:
       raise ValueError(f'wpr_go not found: {wpr_go}')
     if wpr_arg:
       # Replacing --wpr with --network.
@@ -797,7 +805,8 @@ class CrossbenchTest(object):
       android_json = self.ANDROID_HJSON % (browser_app, ADB_TOOL)
       self.browser = self.CHROME_BROWSER % android_json
     else:
-      self.browser = self.CHROME_BROWSER % possible_browser._local_executable
+      assert hasattr(possible_browser, 'local_executable')
+      self.browser = self.CHROME_BROWSER % possible_browser.local_executable
 
   def _find_chromedriver(self, browser_arg):
     browser_arg = browser_arg.lower()
@@ -1156,6 +1165,7 @@ def _run_benchmarks_on_shardmap(shard_map, options, isolated_out_dir,
     benchmarks = shard_configuration['crossbench']
     # Overwriting the "run_benchmark" with the Crossbench tool.
     options.executable = str(CROSSBENCH_TOOL)
+    original_passthrough_args = options.passthrough_args
     for benchmark, benchmark_config in benchmarks.items():
       display_name = benchmark_config.get('display_name', benchmark)
       print(f'\n### {display_name} ###')
@@ -1164,10 +1174,11 @@ def _run_benchmarks_on_shardmap(shard_map, options, isolated_out_dir,
       options.benchmarks = benchmark
       crossbench_test = CrossbenchTest(options, isolated_out_dir)
       return_code = crossbench_test.execute_benchmark(benchmark, display_name,
-                                                      options.passthrough_args)
+                                                      [])
       overall_return_code = return_code or overall_return_code
       test_results_files.append(
           OutputFilePaths(isolated_out_dir, display_name).test_results)
+      options.passthrough_args = original_passthrough_args
 
   return overall_return_code
 

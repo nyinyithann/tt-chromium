@@ -5,15 +5,17 @@
 #include "services/network/ip_protection/ip_protection_proxy_list_manager_impl.h"
 
 #include <memory>
+#include <optional>
 
 #include "base/metrics/histogram_functions.h"
 #include "base/task/task_traits.h"
 #include "base/task/thread_pool.h"
 #include "base/time/time.h"
+#include "components/ip_protection/common/ip_protection_data_types.h"
+#include "components/ip_protection/common/ip_protection_telemetry.h"
 #include "net/base/features.h"
 #include "net/base/proxy_chain.h"
 #include "services/network/ip_protection/ip_protection_config_cache.h"
-#include "services/network/ip_protection/ip_protection_data_types.h"
 #include "services/network/ip_protection/ip_protection_geo_utils.h"
 
 namespace network {
@@ -28,15 +30,24 @@ constexpr char kDefaultGeo[] = "EARTH";
 // call which means a `proxy_list` with a value of `std::nullopt` would be
 // returned. Thus, the following function captures all states of failure
 // accurately even though we only check the `proxy_chain`.
-IpProtectionProxyListManagerImpl::ProxyListResult GetProxyListResult(
-    const std::optional<std::vector<net::ProxyChain>>& proxy_list) {
+void RecordTelemetry(
+    const std::optional<std::vector<net::ProxyChain>>& proxy_list,
+    base::TimeDelta duration) {
+  using ::ip_protection::GetProxyListResult;
+
+  GetProxyListResult result;
   if (!proxy_list.has_value()) {
-    return IpProtectionProxyListManagerImpl::ProxyListResult::kFailed;
+    result = GetProxyListResult::kFailed;
+  } else if (proxy_list->empty()) {
+    result = GetProxyListResult::kEmptyList;
+  } else {
+    result = GetProxyListResult::kPopulatedList;
   }
-  if (proxy_list->empty()) {
-    return IpProtectionProxyListManagerImpl::ProxyListResult::kEmptyList;
-  }
-  return IpProtectionProxyListManagerImpl::ProxyListResult::kPopulatedList;
+
+  ip_protection::Telemetry().ProxyListRefreshComplete(
+      result, result == GetProxyListResult::kFailed
+                  ? std::nullopt
+                  : std::make_optional(duration));
 }
 
 }  // namespace
@@ -126,20 +137,15 @@ void IpProtectionProxyListManagerImpl::RefreshProxyList() {
 void IpProtectionProxyListManagerImpl::OnGotProxyList(
     const base::TimeTicks refresh_start_time_for_metrics,
     const std::optional<std::vector<net::ProxyChain>> proxy_list,
-    const std::optional<GeoHint> geo_hint) {
+    const std::optional<ip_protection::GeoHint> geo_hint) {
   fetching_proxy_list_ = false;
 
-  base::UmaHistogramEnumeration(
-      "NetworkService.IpProtection.GetProxyListResult",
-      GetProxyListResult(proxy_list));
+  RecordTelemetry(proxy_list,
+                  base::TimeTicks::Now() - refresh_start_time_for_metrics);
 
   // If the request for fetching the proxy list is successful, utilize the new
   // proxy list, otherwise, continue using the existing list, if any.
   if (proxy_list.has_value()) {
-    base::UmaHistogramMediumTimes(
-        "NetworkService.IpProtection.ProxyListRefreshTime",
-        base::TimeTicks::Now() - refresh_start_time_for_metrics);
-
     proxy_list_ = *proxy_list;
     have_fetched_proxy_list_ = true;
 

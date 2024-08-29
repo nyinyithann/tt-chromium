@@ -3472,8 +3472,8 @@ const char kSiteSearchSettingsPolicyName[] = "Enable SiteSearchSettings policy";
 const char kSiteSearchSettingsPolicyDescription[] =
     "Allow site search engines to be defined by the SiteSearchSettings policy.";
 
-const char kDesktopPWAsUserLinkCapturingName[] = "Desktop PWA Link Capturing";
-const char kDesktopPWAsUserLinkCapturingDescription[] =
+const char kPwaNavigationCapturingName[] = "Desktop PWA Link Capturing";
+const char kPwaNavigationCapturingDescription[] =
     "Enables opening links from Chrome in an installed PWA. Currently under "
     "reimplementation.";
 #endif
@@ -3562,11 +3562,6 @@ const char kSyncSandboxName[] = "Use Chrome Sync sandbox";
 const char kSyncSandboxDescription[] =
     "Connects to the testing server for Chrome Sync.";
 
-const char kSyncSessionOnVisibilityChangedName[] =
-    "Sync session when tab visibility changes";
-const char kSyncSessionOnVisibilityChangedDescription[] =
-    "This flag enables session syncing when the visibility of a tab changes.";
-
 const char kSyncTrustedVaultPassphrasePromoName[] =
     "Enable promos for sync trusted vault passphrase.";
 const char kSyncTrustedVaultPassphrasePromoDescription[] =
@@ -3647,6 +3642,12 @@ const char kToolbarPinningName[] = "Toolbar pinning";
 const char kToolbarPinningDescription[] =
     "Enables the ability to pin features to the toolbar via the Customize "
     "Chrome side panel.";
+#endif
+
+#if !BUILDFLAG(IS_ANDROID)
+const char kTopChromeToastsName[] = "Top Chrome Toasts";
+const char kTopChromeToastsDescription[] =
+    "Enables the use of toasts to present confirmation of user actions.";
 #endif
 
 const char kTopChromeTouchUiName[] = "Touch UI Layout";

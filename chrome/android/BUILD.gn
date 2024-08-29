@@ -287,7 +287,7 @@ if (current_toolchain == default_toolchain) {
   android_resources("java_overlay_resources") {
     # Target for overrides of //ui/android:ui_java_resources
     resource_overlay = true
-    sources = [ "java/res_overlay/values/styles.xml" ]
+    sources = [ "java/res_overlay/values-v33/styles.xml" ]
     deps = [ "//ui/android:ui_java_resources" ]
   }
 
@@ -1776,6 +1776,7 @@ if (current_toolchain == default_toolchain) {
       "//chrome/browser/password_manager/android:java",
       "//chrome/browser/password_manager/android:settings_interface_java",
       "//chrome/browser/password_manager/android:test_support_java",
+      "//chrome/browser/password_manager/android/access_loss:helper_java",
       "//chrome/browser/password_manager/android/account_storage_toggle:java",
       "//chrome/browser/password_manager/android/pwd_check_wrapper:test_support_java",
       "//chrome/browser/password_manager/android/pwd_migration:java",

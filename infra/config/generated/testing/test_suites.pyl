@@ -2,15 +2,9 @@
 # Instead:
 # 1. Modify //infra/config/targets/basic_suites.star, //infra/config/targets/compound_suites.star and/or //infra/config/targets/matrix_compound_suites.star
 # 2. Run //infra/config/main.star
-# 3. Run //infra/config/scripts/sync-pyl-files.py
 
 {
   'basic_suites': {
-
-    'android_ar_gtests': {
-      'monochrome_public_test_ar_apk': {},
-      'vr_android_unittests': {},
-    },
 
     'android_ci_only_fieldtrial_webview_tests': {
       'webview_trichrome_64_cts_tests_no_field_trial': {
@@ -286,18 +280,6 @@
       'wm_unittests': {},
     },
 
-    'bfcache_android_specific_gtests': {
-      'bf_cache_android_browsertests': {
-        'test': 'android_browsertests',
-        'args': [
-          '--disable-features=BackForwardCache',
-        ],
-        'swarming': {
-          'shards': 2,
-        },
-      },
-    },
-
     'bfcache_generic_gtests': {
       'bf_cache_content_browsertests': {
         'test': 'content_browsertests',
@@ -346,23 +328,6 @@
             '--verbose',
           ],
         },
-      },
-    },
-
-    'cast_junit_tests': {
-      'cast_base_junit_tests': {
-        'mixins': [
-          'x86-64',
-          'linux-jammy',
-          'junit-swarming-emulator',
-        ],
-      },
-      'cast_shell_junit_tests': {
-        'mixins': [
-          'x86-64',
-          'linux-jammy',
-          'junit-swarming-emulator',
-        ],
       },
     },
 
@@ -1533,6 +1498,31 @@
         },
         'experiment_percentage': 100,
       },
+      'brfetch_headless_shell_wpt_tests': {
+        'test': 'headless_shell_wpt',
+        'results_handler': 'layout tests',
+        'mixins': [
+          'has_native_resultdb_integration',
+          'blink_tests_write_run_histories',
+        ],
+        'args': [
+          '--flag-specific=background-resource-fetch',
+          '--skipped=always',
+          '--inverted-test-launcher-filter-file=../../third_party/blink/web_tests/TestLists/chrome.filter',
+          '--test-launcher-filter-file=../../third_party/blink/web_tests/TestLists/headless_shell.filter',
+        ],
+        'ci_only': True,
+        'swarming': {
+          'shards': 1,
+        },
+        'merge': {
+          'script': '//third_party/blink/tools/merge_web_test_results.py',
+          'args': [
+            '--verbose',
+          ],
+        },
+        'experiment_percentage': 100,
+      },
     },
 
     'chromium_web_tests_graphite_isolated_scripts': {
@@ -1582,6 +1572,30 @@
           ],
         },
       },
+      'graphite_enabled_headless_shell_wpt_tests': {
+        'test': 'headless_shell_wpt',
+        'results_handler': 'layout tests',
+        'mixins': [
+          'has_native_resultdb_integration',
+          'blink_tests_write_run_histories',
+        ],
+        'args': [
+          '--flag-specific=enable-skia-graphite',
+          '--skipped=always',
+          '--timeout-multiplier=2',
+          '--inverted-test-launcher-filter-file=../../third_party/blink/web_tests/TestLists/chrome.filter',
+          '--test-launcher-filter-file=../../third_party/blink/web_tests/TestLists/headless_shell.filter',
+        ],
+        'swarming': {
+          'shards': 1,
+        },
+        'merge': {
+          'script': '//third_party/blink/tools/merge_web_test_results.py',
+          'args': [
+            '--verbose',
+          ],
+        },
+      },
     },
 
     'chromium_web_tests_high_dpi_isolated_scripts': {
@@ -1621,6 +1635,29 @@
         ],
         'swarming': {
           'shards': 3,
+        },
+        'merge': {
+          'script': '//third_party/blink/tools/merge_web_test_results.py',
+          'args': [
+            '--verbose',
+          ],
+        },
+      },
+      'high_dpi_headless_shell_wpt_tests': {
+        'test': 'headless_shell_wpt',
+        'results_handler': 'layout tests',
+        'mixins': [
+          'has_native_resultdb_integration',
+          'blink_tests_write_run_histories',
+        ],
+        'args': [
+          '--flag-specific=highdpi',
+          '--skipped=always',
+          '--inverted-test-launcher-filter-file=../../third_party/blink/web_tests/TestLists/chrome.filter',
+          '--test-launcher-filter-file=../../third_party/blink/web_tests/TestLists/headless_shell.filter',
+        ],
+        'swarming': {
+          'shards': 1,
         },
         'merge': {
           'script': '//third_party/blink/tools/merge_web_test_results.py',
@@ -1677,6 +1714,31 @@
         ],
         'args': [
           '--test-launcher-filter-file=../../third_party/blink/web_tests/TestLists/chrome.filter',
+        ],
+        'swarming': {
+          'shards': 1,
+        },
+        'merge': {
+          'script': '//third_party/blink/tools/merge_web_test_results.py',
+          'args': [
+            '--verbose',
+          ],
+        },
+      },
+      'headless_shell_wpt_tests': {
+        'test': 'headless_shell_wpt',
+        'results_handler': 'layout tests',
+        'mixins': [
+          'has_native_resultdb_integration',
+        ],
+        'args': [
+          '--test-type',
+          'testharness',
+          'reftest',
+          'crashtest',
+          'print-reftest',
+          '--inverted-test-launcher-filter-file=../../third_party/blink/web_tests/TestLists/chrome.filter',
+          '--test-launcher-filter-file=../../third_party/blink/web_tests/TestLists/headless_shell.filter',
         ],
         'swarming': {
           'shards': 1,
@@ -1948,6 +2010,31 @@
       'grit_python_unittests': {
         'resultdb': {
           'enable': True,
+        },
+      },
+      'headless_shell_wpt_tests': {
+        'test': 'headless_shell_wpt',
+        'results_handler': 'layout tests',
+        'mixins': [
+          'has_native_resultdb_integration',
+        ],
+        'args': [
+          '--test-type',
+          'testharness',
+          'reftest',
+          'crashtest',
+          'print-reftest',
+          '--inverted-test-launcher-filter-file=../../third_party/blink/web_tests/TestLists/chrome.filter',
+          '--test-launcher-filter-file=../../third_party/blink/web_tests/TestLists/headless_shell.filter',
+        ],
+        'swarming': {
+          'shards': 1,
+        },
+        'merge': {
+          'script': '//third_party/blink/tools/merge_web_test_results.py',
+          'args': [
+            '--verbose',
+          ],
         },
       },
       'telemetry_gpu_unittests': {
@@ -3908,11 +3995,14 @@
     },
 
     'headless_shell_wpt_tests_isolated_scripts': {
-      'headless_shell_wpt_tests': {
+      'headless_shell_wpt_tests_include_all': {
         'test': 'headless_shell_wpt',
         'results_handler': 'layout tests',
         'mixins': [
           'has_native_resultdb_integration',
+        ],
+        'args': [
+          '--inverted-test-launcher-filter-file=../../third_party/blink/web_tests/TestLists/chrome.filter',
         ],
         'swarming': {
           'shards': 10,
@@ -4320,6 +4410,28 @@
         ],
         'swarming': {
           'shards': 10,
+        },
+        'merge': {
+          'script': '//third_party/blink/tools/merge_web_test_results.py',
+          'args': [
+            '--verbose',
+          ],
+        },
+      },
+      'not_site_per_process_headless_shell_wpt_tests': {
+        'test': 'headless_shell_wpt',
+        'results_handler': 'layout tests',
+        'mixins': [
+          'has_native_resultdb_integration',
+          'blink_tests_write_run_histories',
+        ],
+        'args': [
+          '--flag-specific=disable-site-isolation-trials',
+          '--inverted-test-launcher-filter-file=../../third_party/blink/web_tests/TestLists/chrome.filter',
+          '--test-launcher-filter-file=../../third_party/blink/web_tests/TestLists/headless_shell.filter',
+        ],
+        'swarming': {
+          'shards': 1,
         },
         'merge': {
           'script': '//third_party/blink/tools/merge_web_test_results.py',
@@ -5318,6 +5430,36 @@
           ],
         },
       },
+      'headless_shell_wpt_tests': {
+        'test': 'headless_shell_wpt',
+        'results_handler': 'layout tests',
+        'mixins': [
+          'has_native_resultdb_integration',
+        ],
+        'args': [
+          '--test-type',
+          'testharness',
+          'reftest',
+          'crashtest',
+          'print-reftest',
+          '--inverted-test-launcher-filter-file=../../third_party/blink/web_tests/TestLists/chrome.filter',
+          '--test-launcher-filter-file=../../third_party/blink/web_tests/TestLists/headless_shell.filter',
+          '-t',
+          'Release',
+          'external/wpt/webrtc',
+          'external/wpt/webrtc-encoded-transform',
+          'external/wpt/webrtc-extensions',
+          'external/wpt/webrtc-priority',
+          'external/wpt/webrtc-stats',
+          'external/wpt/webrtc-svc',
+        ],
+        'merge': {
+          'script': '//third_party/blink/tools/merge_web_test_results.py',
+          'args': [
+            '--verbose',
+          ],
+        },
+      },
     },
 
     'webview_64_cts_tests_gtest': {
@@ -5330,19 +5472,6 @@
         ],
         'swarming': {
           'shards': 2,
-        },
-      },
-    },
-
-    'webview_bot_instrumentation_test_apk_bfcache_mutations_gtest': {
-      'webview_instrumentation_test_apk_bfcache_mutations': {
-        'test': 'webview_instrumentation_test_apk',
-        'args': [
-          '--use-apk-under-test-flags-file',
-          '--enable-features=WebViewBackForwardCache',
-        ],
-        'swarming': {
-          'shards': 12,
         },
       },
     },
@@ -5386,23 +5515,6 @@
 
     'webview_bot_unittests_gtest': {
       'android_webview_unittests': {},
-    },
-
-    'webview_cts_tests_bfcache_mutations_gtest': {
-      'webview_cts_tests_bfcache_mutations': {
-        'test': 'webview_cts_tests',
-        'mixins': [
-          'webview_cts_archive',
-        ],
-        'args': [
-          '--use-apk-under-test-flags-file',
-          '--enable-features=WebViewBackForwardCache',
-          '--store-tombstones',
-        ],
-        'swarming': {
-          'shards': 2,
-        },
-      },
     },
 
     'webview_cts_tests_gtest': {
@@ -5647,12 +5759,6 @@
 
   'compound_suites': {
 
-    'android_10_rel_gtests': [
-      'android_ar_gtests',
-      'android_trichrome_smoke_tests',
-      'vr_android_specific_chromium_tests',
-    ],
-
     'android_12_dbg_emulator_gtests': [
       'android_trichrome_smoke_tests',
     ],
@@ -5709,13 +5815,6 @@
       'webview_64_cts_tests_gtest',
       'webview_instrumentation_test_apk_single_process_mode_gtests',
       'webview_ui_instrumentation_tests',
-    ],
-
-    'bfcache_android_gtests': [
-      'bfcache_android_specific_gtests',
-      'bfcache_generic_gtests',
-      'webview_bot_instrumentation_test_apk_bfcache_mutations_gtest',
-      'webview_cts_tests_bfcache_mutations_gtest',
     ],
 
     'bfcache_linux_gtests': [
@@ -6694,24 +6793,6 @@
     },
 
     'chromeos_ctp_preuprev_tests': {
-      'chromeos_chrome_cq_medium_tast_tests': {
-        'variants': [
-          'CROS_RELEASE_LKGM',
-        ],
-      },
-      'chromeos_device_only_gtests': {
-        'variants': [
-          'CROS_RELEASE_LKGM',
-        ],
-      },
-      'chromeos_integration_tests_suite': {
-        'variants': [
-          'CROS_RELEASE_LKGM',
-        ],
-      },
-    },
-
-    'chromeos_ctp_preuprev_tests_extended': {
       'chromeos_chrome_all_tast_tests': {
         'mixins': [
           'shards-30',

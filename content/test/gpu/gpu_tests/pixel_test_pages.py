@@ -985,22 +985,24 @@ class PixelTestPages():
   def SwiftShaderPages(base_name: str) -> List[PixelTestPage]:
     browser_args = [cba.DISABLE_GPU]
     suffix = '_SwiftShader'
+    standard_crop = ca.NonWhiteContentCropAction(
+        initial_crop=ca.FixedRectCropAction(0, 0, 350, 350))
     return [
         PixelTestPage('pixel_canvas2d.html',
                       base_name + '_Canvas2DRedBox' + suffix,
-                      test_rect=[0, 0, 300, 300],
+                      crop_action=standard_crop,
                       browser_args=browser_args),
         PixelTestPage('pixel_css3d.html',
                       base_name + '_CSS3DBlueBox' + suffix,
-                      test_rect=[0, 0, 300, 300],
+                      crop_action=standard_crop,
                       browser_args=browser_args),
         PixelTestPage('pixel_webgl_aa_alpha.html',
                       base_name + '_WebGLGreenTriangle_AA_Alpha' + suffix,
-                      test_rect=[0, 0, 300, 300],
+                      crop_action=standard_crop,
                       browser_args=browser_args),
         PixelTestPage('pixel_repeated_webgl_to_2d.html',
                       base_name + '_RepeatedWebGLTo2D' + suffix,
-                      test_rect=[0, 0, 256, 256],
+                      crop_action=standard_crop,
                       browser_args=browser_args),
     ]
 
@@ -1009,19 +1011,19 @@ class PixelTestPages():
   def NoGpuProcessPages(base_name: str) -> List[PixelTestPage]:
     browser_args = [cba.DISABLE_GPU, cba.DISABLE_SOFTWARE_RASTERIZER]
     suffix = '_NoGpuProcess'
+    standard_crop = ca.NonWhiteContentCropAction(
+        initial_crop=ca.FixedRectCropAction(0, 0, 350, 350))
     return [
-        PixelTestPage(
-            'pixel_canvas2d.html',
-            base_name + '_Canvas2DRedBox' + suffix,
-            test_rect=[0, 0, 300, 300],
-            browser_args=browser_args,
-            gpu_process_disabled=True),
-        PixelTestPage(
-            'pixel_css3d.html',
-            base_name + '_CSS3DBlueBox' + suffix,
-            test_rect=[0, 0, 300, 300],
-            browser_args=browser_args,
-            gpu_process_disabled=True),
+        PixelTestPage('pixel_canvas2d.html',
+                      base_name + '_Canvas2DRedBox' + suffix,
+                      crop_action=standard_crop,
+                      browser_args=browser_args,
+                      gpu_process_disabled=True),
+        PixelTestPage('pixel_css3d.html',
+                      base_name + '_CSS3DBlueBox' + suffix,
+                      crop_action=standard_crop,
+                      browser_args=browser_args,
+                      gpu_process_disabled=True),
     ]
 
   # Pages that should be run with various macOS specific command line
@@ -1612,21 +1614,6 @@ class PixelTestPages():
                       browser_args=['--force-color-profile=hdr10']),
     ]
 
-  # TODO(crbug.com/337737554): Move this to trace_test_pages.py
-  # Check that the root swap chain claims to be opaque. A root swap chain with a
-  # premultiplied alpha mode has a large negative battery impact (even if all
-  # the pixels are opaque).
-  @staticmethod
-  def RootSwapChainPages(base_name: str) -> List[PixelTestPage]:
-    return [
-        PixelTestPage('wait_for_compositing.html',
-                      base_name + '_IsOpaque',
-                      crop_action=ca.NoOpCropAction(),
-                      other_args={
-                          'has_alpha': False,
-                      }),
-    ]
-
   # This should only be used with the cast_streaming suite.
   @staticmethod
   def CastStreamingReceiverPages(base_name) -> List[PixelTestPage]:
@@ -1636,19 +1623,4 @@ class PixelTestPages():
             base_name + '_VP8_1Frame',
             crop_action=ca.NoOpCropAction(),
         ),
-    ]
-
-  # TODO(crbug.com/337737554): Move this to trace_test_pages.py
-  # Check what MediaFoundationD3D11VideoCapture works
-  @staticmethod
-  def MediaFoundationD3D11VideoCapturePages(
-      base_name: str) -> List[PixelTestPage]:
-    return [
-        PixelTestPage('media_foundation_d3d11_video_capture.html',
-                      base_name + '_MediaFoundationD3D11VideoCapture',
-                      crop_action=ca.NoOpCropAction(),
-                      browser_args=[
-                          '--use-fake-ui-for-media-stream',
-                          '--enable-features=MediaFoundationD3D11VideoCapture'
-                      ]),
     ]

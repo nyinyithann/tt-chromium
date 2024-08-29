@@ -34,10 +34,9 @@ version_info::Channel BrowserReportGeneratorIOS::GetChannel() {
 std::vector<BrowserReportGenerator::ReportedProfileData>
 BrowserReportGeneratorIOS::GetReportedProfiles() {
   std::vector<BrowserReportGenerator::ReportedProfileData> reportedProfileData;
-  for (const auto* browser_state : GetApplicationContext()
-                                       ->GetChromeBrowserStateManager()
-                                       ->GetLoadedBrowserStates()) {
-    // ChromeBrowserStateManager should not return off-the-record BrowserStates.
+  for (const auto* browser_state :
+       GetApplicationContext()->GetProfileManager()->GetLoadedBrowserStates()) {
+    // ProfileManager should not return off-the-record BrowserStates.
     CHECK(!browser_state->IsOffTheRecord());
     reportedProfileData.push_back({
         browser_state->GetStatePath().AsUTF8Unsafe(),

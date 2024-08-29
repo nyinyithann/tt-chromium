@@ -130,10 +130,6 @@ BASE_FEATURE(kRelatedWebsiteSetsDevUI,
              "RelatedWebsiteSetsDevUI",
              base::FEATURE_DISABLED_BY_DEFAULT);
 
-BASE_FEATURE(kFingerprintingProtectionSetting,
-             "FingerprintingProtectionSetting",
-             base::FEATURE_DISABLED_BY_DEFAULT);
-
 BASE_FEATURE(kFingerprintingProtectionUx,
              "FingerprintingProtectionUx",
              base::FEATURE_DISABLED_BY_DEFAULT);
@@ -235,5 +231,12 @@ BASE_FEATURE(kPrivacySandboxMigratePrefsToNoticeConsentDataModel,
 BASE_FEATURE(kPrivacySandboxPrivacyPolicy,
              "PrivacySandboxPrivacyPolicy",
              base::FEATURE_DISABLED_BY_DEFAULT);
+
+BASE_FEATURE(kPrivacySandboxSentimentSurvey,
+             "PrivacySandboxSentimentSurvey",
+             base::FEATURE_DISABLED_BY_DEFAULT);
+
+const base::FeatureParam<std::string> kPrivacySandboxSentimentSurveyTriggerId{
+    &kPrivacySandboxSentimentSurvey, "sentiment-survey-trigger-id", ""};
 
 }  // namespace privacy_sandbox

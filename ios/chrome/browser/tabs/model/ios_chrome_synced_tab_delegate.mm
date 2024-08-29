@@ -11,17 +11,21 @@
 #import "components/sync_sessions/sync_sessions_client.h"
 #import "components/sync_sessions/synced_window_delegates_getter.h"
 #import "ios/chrome/browser/complex_tasks/model/ios_task_tab_helper.h"
+#import "ios/chrome/browser/ntp/ui_bundled/new_tab_page_feature.h"
 #import "ios/chrome/browser/sessions/model/ios_chrome_session_tab_helper.h"
 #import "ios/chrome/browser/shared/model/browser_state/chrome_browser_state.h"
 #import "ios/chrome/browser/shared/model/prefs/pref_names.h"
 #import "ios/chrome/browser/signin/model/authentication_service.h"
 #import "ios/chrome/browser/signin/model/authentication_service_factory.h"
-#import "ios/chrome/browser/ui/ntp/new_tab_page_feature.h"
 #import "ios/web/public/navigation/navigation_item.h"
 #import "ios/web/public/navigation/navigation_manager.h"
 #import "ios/web/public/web_state.h"
 
 namespace {
+
+// The minimum time between two sync updates of `last_active_time` when the tab
+// hasn't changed.
+constexpr base::TimeDelta kSyncActiveTimeThreshold = base::Minutes(10);
 
 // Helper to access the correct NavigationItem, accounting for pending entries.
 // May return null in rare cases such as a FORWARD_BACK navigation cancelling a
@@ -76,14 +80,12 @@ bool IOSChromeSyncedTabDelegate::IsBeingDestroyed() const {
 
 base::Time IOSChromeSyncedTabDelegate::GetLastActiveTime() {
   base::Time last_active_time = web_state_->GetLastActiveTime();
-  if (base::FeatureList::IsEnabled(syncer::kSyncSessionOnVisibilityChanged)) {
-    if (cached_last_active_time_.has_value() &&
-        last_active_time - cached_last_active_time_.value() <
-            syncer::kSyncSessionOnVisibilityChangedTimeThreshold.Get()) {
-      return cached_last_active_time_.value();
-    }
-    cached_last_active_time_ = last_active_time;
+  if (cached_last_active_time_.has_value() &&
+      last_active_time - cached_last_active_time_.value() <
+          kSyncActiveTimeThreshold) {
+    return cached_last_active_time_.value();
   }
+  cached_last_active_time_ = last_active_time;
   return last_active_time;
 }
 

@@ -2308,13 +2308,6 @@
       status: "stable"
     },
     {
-      // ImprovedXMLErrors tweaks the way that we emit XML parsing errors in
-      // some cases in order to comply with upstream changes to libxml.
-      // Shipping in M123, so should be safe to remove in M126.
-      name: "ImprovedXMLErrors",
-      status: "stable",
-    },
-    {
       name: "IncomingCallNotifications",
     },
     {
@@ -2519,9 +2512,6 @@
     {
       name: "LCPAnimatedImagesWebExposed",
       status: "test",
-    },
-    {
-      name: "LCPMultipleUpdatesPerElement",
     },
     {
       name: "LegacyWindowsDWriteFontFallback",
@@ -3408,10 +3398,6 @@
       name: "ReadableStreamAsyncIterable",
       status: "stable",
     },
-    {
-      name: "RecollectInlinesReserveCapacity",
-      status: "stable",
-    },
     // If enabled, the Accept-Language header will be reduced.
     {
       name: "ReduceAcceptLanguage",
@@ -3626,12 +3612,6 @@
     {
       // crbug.com/324111880
       name: "RubyShortHeuristics",
-      status: "stable",
-    },
-    {
-      // Runs a microtask checkpoint before creating custom elements in
-      // XMLDocumentParser. Should be safe to remove after M125
-      name: "RunMicrotaskBeforeXmlCustomElement",
       status: "stable",
     },
     {
@@ -4169,11 +4149,6 @@
       status: "stable",
     },
     {
-      // crbug.com/331680200
-      name: "TextAlignJustifyBidiIsolate",
-      status: "stable",
-    },
-    {
       // crbug.com/1008951
       name: "TextDecoratingBox",
       status: "stable",
@@ -4379,12 +4354,6 @@
         "ChromeOS_Ash": "stable",
         "ChromeOS_Lacros": "stable",
       },
-    },
-    {
-      // Makes root scrollbars follow the preferred color scheme by default.
-      // https://chromestatus.com/feature/5089486318075904
-      name: "UsedColorSchemeRootScrollbars",
-      status: "stable",
     },
     {
       name: "UserActivationSameOriginVisibility",

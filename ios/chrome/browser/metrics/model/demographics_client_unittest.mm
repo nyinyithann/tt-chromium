@@ -21,14 +21,14 @@ namespace metrics {
 class DemographicsClientTest : public PlatformTest {
  public:
   DemographicsClientTest() {
-    browser_state_manager_.AddBrowserStateWithBuilder(
+    profile_manager_.AddBrowserStateWithBuilder(
         TestChromeBrowserState::Builder());
   }
 
  private:
   web::WebTaskEnvironment task_environment_;
   IOSChromeScopedTestingLocalState scoped_testing_local_state_;
-  TestChromeBrowserStateManager browser_state_manager_;
+  TestProfileManagerIOS profile_manager_;
 };
 
 TEST_F(DemographicsClientTest, GetNetworkTime) {
@@ -54,9 +54,8 @@ TEST_F(DemographicsClientTest, GetSyncService) {
 
 TEST_F(DemographicsClientTest, GetNumberOfProfilesOnDisk) {
   DemographicsClient demographic_client;
-  // On ChromeBrowserState was created and registered with the
-  // ChromeBrowserStateManager, check the client returns the correct
-  // value.
+  // On ChromeBrowserState was created and registered with the ProfileManager,
+  // check the client returns the correct value.
   EXPECT_EQ(1, demographic_client.GetNumberOfProfilesOnDisk());
 }
 

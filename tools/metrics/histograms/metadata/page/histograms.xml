@@ -127,6 +127,12 @@ chromium-metrics-reviews@google.com.
   <variant name=".GoogleSearch" summary="SRP navigations"/>
 </variants>
 
+<variants name="PageLoadType">
+  <variant name="" summary="regular"/>
+  <variant name=".AfterBackForwardCacheRestore" summary="bfcache restoration"/>
+  <variant name=".Prerender" summary="prerendered"/>
+</variants>
+
 <!-- LINT.IfChange(PagePreloadingTriggerType) -->
 
 <variants name="PagePreloadingTriggerType">
@@ -836,7 +842,7 @@ chromium-metrics-reviews@google.com.
 
 <histogram
     name="PageLoad.Clients.FencedFrames.InteractiveTiming.FirstInputDelay4"
-    units="ms" expires_after="2025-02-23">
+    units="ms" expires_after="2025-10-08">
   <owner>lbrady@google.com</owner>
   <owner>shivanisha@chromium.org</owner>
   <owner>dom@chromium.org</owner>
@@ -864,7 +870,7 @@ chromium-metrics-reviews@google.com.
 
 <histogram
     name="PageLoad.Clients.FencedFrames.LayoutInstability.CumulativeShiftScore.MainFrame"
-    units="scorex10" expires_after="2024-10-08">
+    units="scorex10" expires_after="2025-10-08">
   <owner>lbrady@google.com</owner>
   <owner>shivanisha@chromium.org</owner>
   <owner>dom@chromium.org</owner>
@@ -890,7 +896,7 @@ chromium-metrics-reviews@google.com.
 
 <histogram
     name="PageLoad.Clients.FencedFrames.PaintTiming.NavigationToFirstImagePaint"
-    units="ms" expires_after="2024-10-08">
+    units="ms" expires_after="2025-10-08">
   <owner>lbrady@google.com</owner>
   <owner>shivanisha@chromium.org</owner>
   <owner>dom@chromium.org</owner>
@@ -3118,18 +3124,16 @@ chromium-metrics-reviews@google.com.
   </summary>
 </histogram>
 
-<histogram name="PageLoad.InteractiveTiming.NumInteractions{Bfcache}"
+<histogram name="PageLoad.InteractiveTiming.NumInteractions{PageLoadType}"
     units="Count" expires_after="2025-02-02">
   <owner>sullivan@chromium.org</owner>
   <owner>speed-metrics-dev@chromium.org</owner>
   <summary>
-    The number of user interactions in a page load. Definition of interaction:
+    The number of user interactions in a {PageLoadType} page load. Definition of
+    interaction:
     https://web.dev/better-responsiveness-metric/#group-events-into-interactions
   </summary>
-  <token key="Bfcache">
-    <variant name=""/>
-    <variant name=".AfterBackForwardCacheRestore"/>
-  </token>
+  <token key="PageLoadType" variants="PageLoadType"/>
 </histogram>
 
 <histogram name="PageLoad.InteractiveTiming.ProcessingTime" units="ms"
@@ -3165,7 +3169,7 @@ chromium-metrics-reviews@google.com.
   <owner>iclelland@chromium.org</owner>
   <owner>speed-metrics-dev@chromium.org</owner>
   <summary>
-    The {NormalizedResponsivenessMetric} of a page load {PageLoadType}, in ms.
+    The {NormalizedResponsivenessMetric} of a {PageLoadType} page load, in ms.
     For this metric, we measure the latency of a user interaction by the
     {UserInteractionLatency} within the user interaction.
 
@@ -3177,11 +3181,7 @@ chromium-metrics-reviews@google.com.
     record the INP values which are not able to be recorded in
     UserInteractionLatency.HighPercentile2 for some reasons.
   </summary>
-  <token key="PageLoadType">
-    <variant name=""/>
-    <variant name=".AfterBackForwardCacheRestore"/>
-    <variant name=".Prerender"/>
-  </token>
+  <token key="PageLoadType" variants="PageLoadType"/>
   <token key="NormalizedResponsivenessMetric">
     <variant name="UserInteractionLatency.HighPercentile2"/>
     <variant name="UserInteractionLatencyAtFirstOnHidden.HighPercentile2"/>
@@ -3801,59 +3801,6 @@ chromium-metrics-reviews@google.com.
     <variant name="Second"/>
     <variant name="Third"/>
   </token>
-</histogram>
-
-<histogram
-    name="PageLoad.PaintTiming.NavigationToLargestContentfulPaint.ImageLCPLessThanLoadEnd"
-    enum="Boolean" expires_after="2024-12-30">
-  <owner>haoliuk@chromium.org</owner>
-  <owner>speed-metrics-dev@chromium.org</owner>
-  <summary>
-    Records the count of cases where an LCP image candidate has an LCP less than
-    its LoadEnd. This is counted once per LCP candidate in the
-    PageLoadTracker::OnTimingChanged() method when the LCP candiate changes.
-  </summary>
-</histogram>
-
-<histogram
-    name="PageLoad.PaintTiming.NavigationToLargestContentfulPaint.ImageLoadEndLessThanLoadStart"
-    enum="Boolean" expires_after="2024-08-24">
-  <owner>haoliuk@chromium.org</owner>
-  <owner>speed-metrics-dev@chromium.org</owner>
-  <summary>
-    Records the count of cases where an LCP image candidate has a LoadEnd less
-    than its LoadStart. This is counted once per LCP candidate in the
-    PageLoadTracker::OnTimingChanged() method when the LCP candiate changes.
-  </summary>
-</histogram>
-
-<histogram
-    name="PageLoad.PaintTiming.NavigationToLargestContentfulPaint.ImageLoadStartLessThanDocumentTTFB"
-    enum="Boolean" expires_after="2024-12-30">
-  <owner>haoliuk@chromium.org</owner>
-  <owner>speed-metrics-dev@chromium.org</owner>
-  <summary>
-    Records the count of cases where an LCP image candidate has a LoadStart less
-    than the document TTFB. This is counted once per LCP candidate in the
-    PageLoadTracker::OnTimingChanged() method when the LCP candiate changes.
-  </summary>
-</histogram>
-
-<histogram
-    name="PageLoad.PaintTiming.NavigationToLargestContentfulPaint.ImageLoadStartLessThanDocumentTtfbCauses"
-    enum="LargestContentfulPaintImageLoadStartLessThanDocumentTtfbCauses"
-    expires_after="2024-12-30">
-  <owner>haoliuk@chromium.org</owner>
-  <owner>speed-metrics-dev@chromium.org</owner>
-  <summary>
-    Records the count of 'causes' of LCP image load timings being less than
-    document Time-To-First-Byte(TTFB) to diagnose crbug.com/1431906. This is
-    recorded at most once per image, only when the image's load start was
-    recorded as being before its associated document's TTFB. Recorded in the
-    page load tracker when the LCP candidate changes. Unexplained instances are
-    recorded in the 'Unknown' bucket, and these are expected to diminish over
-    time as additional causes are uncovered.
-  </summary>
 </histogram>
 
 <histogram name="PageLoad.PaintTiming.NavigationToLargestContentfulPaint2"

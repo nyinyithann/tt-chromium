@@ -362,11 +362,9 @@ bool HasLeftwardDirection(const Element& element) {
     return false;
   }
 
-  WritingMode writing_mode = style->GetWritingMode();
-  bool is_rtl = !style->IsLeftToRightDirection();
-  return (writing_mode == WritingMode::kHorizontalTb && is_rtl) ||
-         writing_mode == WritingMode::kVerticalRl ||
-         writing_mode == WritingMode::kSidewaysRl;
+  const auto writing_direction = style->GetWritingDirection();
+  return writing_direction.InlineEnd() == PhysicalDirection::kLeft ||
+         writing_direction.BlockEnd() == PhysicalDirection::kLeft;
 }
 
 bool HasUpwardDirection(const Element& element) {
@@ -375,12 +373,9 @@ bool HasUpwardDirection(const Element& element) {
     return false;
   }
 
-  WritingMode writing_mode = style->GetWritingMode();
-  bool is_rtl = !style->IsLeftToRightDirection();
-  return (is_rtl && (writing_mode == WritingMode::kVerticalRl ||
-                     writing_mode == WritingMode::kVerticalLr ||
-                     writing_mode == WritingMode::kSidewaysRl)) ||
-         (!is_rtl && writing_mode == WritingMode::kSidewaysLr);
+  const auto writing_direction = style->GetWritingDirection();
+  return writing_direction.InlineEnd() == PhysicalDirection::kUp ||
+         writing_direction.BlockEnd() == PhysicalDirection::kUp;
 }
 
 // TODO(meredithl): Automatically generate this method once the IDL compiler has
@@ -5219,8 +5214,8 @@ bool Element::ShouldRecalcHighlightPseudoStyle(
   // different from that of the parent, we need to re-evaluate the units.
   if (highlight_parent &&
       highlight_parent->HasLogicalDirectionRelativeUnits() &&
-      blink::IsHorizontalWritingMode(originating_style.GetWritingMode()) !=
-          blink::IsHorizontalWritingMode(highlight_parent->GetWritingMode())) {
+      originating_style.IsHorizontalWritingMode() !=
+          highlight_parent->IsHorizontalWritingMode()) {
     return true;
   }
   // We do not need to return true for viewport unit dependencies because the
@@ -10413,12 +10408,6 @@ Element* Element::ImplicitAnchorElement() const {
   if (const HTMLElement* html_element = DynamicTo<HTMLElement>(this)) {
     if (Element* internal_anchor = html_element->internalImplicitAnchor()) {
       return internal_anchor;
-    }
-    if (const auto* datalist = DynamicTo<HTMLDataListElement>(html_element)) {
-      if (auto* select = datalist->ParentSelect()) {
-        CHECK(RuntimeEnabledFeatures::StylableSelectEnabled());
-        return select;
-      }
     }
   }
   if (const PseudoElement* pseudo_element = DynamicTo<PseudoElement>(this)) {

@@ -541,7 +541,10 @@ void AuthenticatorBlePermissionMacSheetModel::OnAccept() {
 AuthenticatorTouchIdSheetModel::AuthenticatorTouchIdSheetModel(
     AuthenticatorRequestDialogModel* dialog_model)
     : AuthenticatorSheetModelBase(dialog_model,
-                                  OtherMechanismButtonVisibility::kVisible) {}
+                                  OtherMechanismButtonVisibility::kVisible) {
+  webauthn::user_actions::RecordGpmTouchIdDialogShown(
+      dialog_model->request_type == device::FidoRequestType::kMakeCredential);
+}
 
 std::u16string AuthenticatorTouchIdSheetModel::GetStepTitle() const {
   const std::u16string rp_id = GetRelyingPartyIdString(dialog_model());
@@ -585,6 +588,7 @@ void AuthenticatorTouchIdSheetModel::OnAccept() {
   if (touch_id_completed_) {
     return;
   }
+  webauthn::user_actions::RecordAcceptClick();
   touch_id_completed_ = true;
   dialog_model()->OnTouchIDComplete(false);
 }
@@ -660,7 +664,7 @@ AuthenticatorOffTheRecordInterstitialSheetModel::GetCancelButtonLabel() const {
 AuthenticatorPaaskSheetModel::AuthenticatorPaaskSheetModel(
     AuthenticatorRequestDialogModel* dialog_model)
     : AuthenticatorSheetModelBase(dialog_model,
-                                  OtherMechanismButtonVisibility::kVisible) {
+                                  OtherMechanismButtonVisibility::kHidden) {
   vector_illustrations_.emplace(kPasskeyPhoneIcon, kPasskeyPhoneDarkIcon);
 }
 
@@ -695,10 +699,6 @@ std::u16string AuthenticatorPaaskSheetModel::GetStepDescription() const {
           base::UTF8ToUTF16(dialog_model()->selected_phone_name.value_or("")));
     }
   }
-}
-
-bool AuthenticatorPaaskSheetModel::IsOtherMechanismButtonVisible() const {
-  return false;
 }
 
 bool AuthenticatorPaaskSheetModel::IsManageDevicesButtonVisible() const {
@@ -1351,10 +1351,6 @@ AuthenticatorCableErrorSheetModel::AuthenticatorCableErrorSheetModel(
 AuthenticatorCableErrorSheetModel::~AuthenticatorCableErrorSheetModel() =
     default;
 
-bool AuthenticatorCableErrorSheetModel::IsOtherMechanismButtonVisible() const {
-  return false;
-}
-
 std::u16string AuthenticatorCableErrorSheetModel::GetStepTitle() const {
   return l10n_util::GetStringUTF16(IDS_WEBAUTHN_ERROR_GENERIC_TITLE);
 }
@@ -1426,6 +1422,7 @@ AuthenticatorGPMErrorSheetModel::AuthenticatorGPMErrorSheetModel(
     : AuthenticatorSheetModelBase(dialog_model,
                                   OtherMechanismButtonVisibility::kHidden) {
   vector_illustrations_.emplace(kPasskeyErrorIcon, kPasskeyErrorDarkIcon);
+  webauthn::user_actions::RecordGpmFailureShown();
 }
 
 AuthenticatorGPMErrorSheetModel::~AuthenticatorGPMErrorSheetModel() = default;

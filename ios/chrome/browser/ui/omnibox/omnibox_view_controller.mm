@@ -148,6 +148,12 @@ using base::UserMetricsAction;
                      action:@selector(textFieldDidChange:)
            forControlEvents:UIControlEventEditingChanged];
 
+  if (base::FeatureList::IsEnabled(kEnableLensOverlay)) {
+    [self.view.thumbnailButton addTarget:self
+                                  action:@selector(didTapThumbnailButton)
+                        forControlEvents:UIControlEventTouchUpInside];
+  }
+
   [NSNotificationCenter.defaultCenter
       addObserver:self
          selector:@selector(textInputModeDidChange)
@@ -225,10 +231,6 @@ using base::UserMetricsAction;
   return self.view;
 }
 
-- (id<OmniboxAdditionalTextConsumer>)additionalTextConsumer {
-  return self.view;
-}
-
 #pragma mark - public methods
 
 - (OmniboxTextFieldIOS*)textField {
@@ -244,10 +246,6 @@ using base::UserMetricsAction;
 
 - (void)cleanupOmniboxAfterScribble {
   self.textField.placeholder = l10n_util::GetNSString(IDS_OMNIBOX_EMPTY_HINT);
-}
-
-- (void)setThumbnailImage:(UIImage*)image {
-  [self.view setThumbnailImage:image];
 }
 
 #pragma mark - OmniboxTextFieldDelegate
@@ -317,6 +315,10 @@ using base::UserMetricsAction;
   UIImage* image = self.textField.text.length ? self.defaultLeadingImage
                                               : self.emptyTextLeadingImage;
 
+  if (base::FeatureList::IsEnabled(kEnableLensOverlay)) {
+    self.view.thumbnailButton.selected = NO;
+  }
+
   NSString* accessibilityID =
       self.textField.text.length
           ? kOmniboxLeadingImageDefaultAccessibilityIdentifier
@@ -340,6 +342,10 @@ using base::UserMetricsAction;
 - (void)textFieldDidEndEditing:(UITextField*)textField
                         reason:(UITextFieldDidEndEditingReason)reason {
   self.isTextfieldEditing = NO;
+
+  if (base::FeatureList::IsEnabled(kEnableLensOverlay)) {
+    self.view.thumbnailButton.selected = NO;
+  }
 
   if (!self.omniboxInteractedWhileFocused) {
     RecordAction(
@@ -378,6 +384,14 @@ using base::UserMetricsAction;
 }
 
 - (void)onDeleteBackward {
+  // If not in pre-edit, deleting when cursor is at the beginning interacts with
+  // the thumbnail.
+  if (OmniboxTextFieldIOS* textField = self.textField;
+      !textField.isPreEditing && textField.selectedTextRange.empty &&
+      [textField offsetFromPosition:textField.beginningOfDocument
+                         toPosition:textField.selectedTextRange.start] == 0) {
+    [self didTapThumbnailButton];
+  }
   if (!_textChangeDelegate) {
     // This can happen when the view controller is still alive but the model is
     // already deconstructed on shutdown.
@@ -508,9 +522,19 @@ using base::UserMetricsAction;
   [self.textField setText:text userTextLength:text.length];
 }
 
-- (void)updateAdditionalText:(NSAttributedString*)additionalText {
-  CHECK(IsRichAutocompletionEnabled());
-  self.textField.additionalText = additionalText;
+#pragma mark - OmniboxViewConsumer
+
+- (void)updateAdditionalText:(NSString*)additionalText {
+  [self.view updateAdditionalText:additionalText];
+}
+
+- (void)setOmniboxHasRichInline:(BOOL)omniboxHasRichInline {
+  [self.view setOmniboxHasRichInline:omniboxHasRichInline];
+}
+
+- (void)setThumbnailImage:(UIImage*)image {
+  [self.view setThumbnailImage:image];
+  self.textField.allowsReturnKeyWithEmptyText = !!image;
 }
 
 #pragma mark - EditViewAnimatee
@@ -724,6 +748,17 @@ using base::UserMetricsAction;
 
   if (IsRichAutocompletionEnabled() && _textChangeDelegate) {
     _textChangeDelegate->OnRemoveAdditionalText();
+  }
+}
+
+/// Handles interaction with the thumbnail button. (tap or keyboard delete)
+- (void)didTapThumbnailButton {
+  if (!self.view.thumbnailButton.selected) {
+    self.view.thumbnailButton.selected = YES;
+  } else {
+    if (_textChangeDelegate) {
+      _textChangeDelegate->RemoveThumbnail();
+    }
   }
 }
 
