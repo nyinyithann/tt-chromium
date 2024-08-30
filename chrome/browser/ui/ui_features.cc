@@ -386,7 +386,9 @@ BASE_FEATURE(kToolbarPinning,
              base::FEATURE_DISABLED_BY_DEFAULT);
 
 bool IsToolbarPinningEnabled() {
-  return base::FeatureList::IsEnabled(kToolbarPinning);
+  // FEATURE_DISABLED_BY_DEFAULT doesn't work as expected.
+  // return base::FeatureList::IsEnabled(kToolbarPinning);
+  return false;
 }
 #endif
 

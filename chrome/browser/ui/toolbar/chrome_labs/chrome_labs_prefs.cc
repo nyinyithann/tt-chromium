@@ -49,7 +49,7 @@ const int kChromeLabsActivationThresholdDefaultValue = -1;
 const int kChromeLabsNewExperimentPrefValue = -1;
 
 void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
-  registry->RegisterBooleanPref(kBrowserLabsEnabledEnterprisePolicy, true);
+  registry->RegisterBooleanPref(kBrowserLabsEnabledEnterprisePolicy, false);
 #if BUILDFLAG(IS_CHROMEOS_ASH)
   registry->RegisterDictionaryPref(kChromeLabsNewBadgeDictAshChrome);
 #endif
