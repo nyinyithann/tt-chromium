@@ -51,5 +51,6 @@
   <structure type="chrome_scaled_image" name="IDR_UK_YAHOO_COM_PNG" file="search_engine_choice/yahoo_com.png" />
   <structure type="chrome_scaled_image" name="IDR_YAHOO_COM_PNG" file="search_engine_choice/yahoo_com.png" />
   <structure type="chrome_scaled_image" name="IDR_YAHOO_CO_JP_PNG" file="search_engine_choice/yahoo_com.png" />
+  <structure type="chrome_scaled_image" name="IDR_YEP_COM_PNG" file="search_engine_choice/yep_com.png" />
   <structure type="chrome_scaled_image" name="IDR_YOU_COM_PNG" file="search_engine_choice/you_com.png" />
 </grit-part>
