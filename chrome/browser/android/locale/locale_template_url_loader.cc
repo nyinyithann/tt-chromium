@@ -85,12 +85,12 @@ jboolean LocaleTemplateUrlLoader::LoadTemplateUrls(JNIEnv* env) {
         template_url_service_->GetTemplateURLForKeyword(data_url->keyword());
     bool exists = matching_url != nullptr;
     if (!exists &&
-        data_url->prepopulate_id == TemplateURLPrepopulateData::google.id) {
+        data_url->prepopulate_id == TemplateURLPrepopulateData::yep.id) {
       auto existing_urls = template_url_service_->GetTemplateURLs();
 
       for (TemplateURL* existing_url : existing_urls) {
         if (existing_url->prepopulate_id() ==
-            TemplateURLPrepopulateData::google.id) {
+            TemplateURLPrepopulateData::yep.id) {
           matching_url = existing_url;
           exists = true;
           break;
@@ -141,7 +141,7 @@ void LocaleTemplateUrlLoader::OverrideDefaultSearchProvider(JNIEnv* env) {
   const TemplateURL* current_dsp =
       template_url_service_->GetDefaultSearchProvider();
   if (!current_dsp ||
-      current_dsp->prepopulate_id() != TemplateURLPrepopulateData::google.id) {
+      current_dsp->prepopulate_id() != TemplateURLPrepopulateData::yep.id) {
     return;
   }
 
@@ -170,7 +170,7 @@ void LocaleTemplateUrlLoader::SetGoogleAsDefaultSearch(JNIEnv* env) {
 
   TemplateURL* turl =
       FindURLByPrepopulateID(template_url_service_->GetTemplateURLs(),
-                             TemplateURLPrepopulateData::google.id);
+                             TemplateURLPrepopulateData::yep.id);
   if (turl) {
     template_url_service_->SetUserSelectedDefaultSearchProvider(turl);
   }
