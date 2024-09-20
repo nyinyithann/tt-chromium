@@ -22,6 +22,7 @@
 bool HandleChromeAboutAndChromeSyncRewrite(
     GURL* url,
     content::BrowserContext* browser_context) {
+
   // Check that about: URLs are either
   // 1) fixed up to chrome: (by url_formatter::FixupURL applied to
   //    browser-initiated navigations)
@@ -30,6 +31,12 @@ bool HandleChromeAboutAndChromeSyncRewrite(
   //    renderer-initiated navigations)
   DCHECK(url->IsAboutBlank() || url->IsAboutSrcdoc() ||
          !url->SchemeIs(url::kAboutScheme));
+
+  if (url->SchemeIs(content::kTaktakUIScheme)) {
+    GURL::Replacements replacements;
+    replacements.SetSchemeStr(content::kChromeUIScheme);
+    *url = url->ReplaceComponents(replacements);
+  }
 
   // Only handle chrome: URLs.
   if (!url->SchemeIs(content::kChromeUIScheme))

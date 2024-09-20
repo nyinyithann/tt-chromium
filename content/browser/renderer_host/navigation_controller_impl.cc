@@ -1316,10 +1316,14 @@ void NavigationControllerImpl::PruneForwardEntries() {
 void NavigationControllerImpl::UpdateVirtualURLToURL(NavigationEntryImpl* entry,
                                                      const GURL& new_url) {
   GURL new_virtual_url(new_url);
-  if (BrowserURLHandlerImpl::GetInstance()->ReverseURLRewrite(
-          &new_virtual_url, entry->GetVirtualURL(), browser_context_)) {
-    entry->SetVirtualURL(new_virtual_url);
+  if (new_virtual_url.SchemeIs(content::kChromeUIScheme)) {
+    GURL::Replacements replacements;
+    replacements.SetSchemeStr(content::kTaktakUIScheme);
+    new_virtual_url = new_virtual_url.ReplaceComponents(replacements);
   }
+  BrowserURLHandlerImpl::GetInstance()->ReverseURLRewrite(
+          &new_virtual_url, entry->GetVirtualURL(), browser_context_);
+  entry->SetVirtualURL(new_virtual_url);
 }
 
 base::WeakPtr<NavigationHandle> NavigationControllerImpl::LoadURL(

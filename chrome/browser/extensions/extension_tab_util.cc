@@ -886,7 +886,7 @@ bool ExtensionTabUtil::IsKillURL(const GURL& url) {
     return true;
   }
 
-  if (!url.SchemeIs(content::kChromeUIScheme)) {
+  if (!url.SchemeIs(content::kTaktakUIScheme)) {
     return false;
   }
 

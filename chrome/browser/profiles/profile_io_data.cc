@@ -39,6 +39,7 @@ bool ProfileIOData::IsHandledProtocol(const std::string& scheme) {
       extensions::kExtensionScheme,
 #endif
       content::kChromeUIScheme,
+      content::kTaktakUIScheme,
       content::kChromeUIUntrustedScheme,
       url::kDataScheme,
 #if BUILDFLAG(IS_CHROMEOS_ASH)

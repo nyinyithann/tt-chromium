@@ -52,6 +52,7 @@ namespace {
 
 // Hardcode these constants to avoid dependences on //chrome and //content.
 const char kChromeUIScheme[] = "chrome";
+const char kTaktakUIScheme[] = "taktak";
 const char kChromeUIDinoHost[] = "dino";
 
 static const char kRedirectLoopLearnMoreUrl[] =
@@ -981,7 +982,8 @@ LocalizedError::PageState LocalizedError::GetPageState(
   webui::SetLoadTimeDataDefaults(locale, &result.strings);
 
   bool show_game_instructions = failed_url.host() == kChromeUIDinoHost &&
-                                failed_url.scheme() == kChromeUIScheme;
+                                (failed_url.scheme() == kChromeUIScheme ||
+                                 failed_url.scheme() == kTaktakUIScheme);
 
   // Grab the strings and settings that depend on the error type.  Init
   // options with default values.
@@ -1017,8 +1019,16 @@ LocalizedError::PageState LocalizedError::GetPageState(
     options.suggestions &= ~SUGGEST_CONTACT_ADMINISTRATOR;
   }
 
+  GURL final_failed_url = failed_url;
+  if (failed_url.scheme() == kChromeUIScheme) {
+    GURL::Replacements replacements;
+    replacements.SetSchemeStr(kTaktakUIScheme);
+
+    final_failed_url = failed_url.ReplaceComponents(replacements);
+  }
+
   std::u16string failed_url_string(url_formatter::FormatUrl(
-      failed_url, url_formatter::kFormatUrlOmitNothing,
+      final_failed_url, url_formatter::kFormatUrlOmitNothing,
       base::UnescapeRule::NORMAL, nullptr, nullptr, nullptr));
   // URLs are always LTR.
   if (base::i18n::IsRTL())
@@ -1034,7 +1044,7 @@ LocalizedError::PageState LocalizedError::GetPageState(
     // instead show the scheme.
     if (error_code == net::ERR_BLOCKED_BY_ADMINISTRATOR && host_name.empty()) {
       options.heading_resource_id = IDS_ERRORPAGES_HEADING_BLOCKED_SCHEME;
-      host_name = base::UTF8ToUTF16(failed_url.scheme());
+      host_name = base::UTF8ToUTF16(final_failed_url.scheme());
     }
   }
 
@@ -1120,7 +1130,7 @@ LocalizedError::PageState LocalizedError::GetPageState(
     result.reload_button_shown = true;
     reload_button.Set("msg",
                       l10n_util::GetStringUTF16(IDS_ERRORPAGES_BUTTON_RELOAD));
-    reload_button.Set("reloadUrl", failed_url.spec());
+    reload_button.Set("reloadUrl", final_failed_url.spec());
     result.strings.Set("reloadButton", std::move(reload_button));
   }
 
@@ -1133,7 +1143,7 @@ LocalizedError::PageState LocalizedError::GetPageState(
   // Add default suggestions and any relevant supporting details.
   GetSuggestionsSummaryList(error_code, result.strings, options.suggestions,
                             locale, suggestions_summary_list,
-                            can_show_network_diagnostics_dialog, failed_url,
+                            can_show_network_diagnostics_dialog, final_failed_url,
                             error_page_params);
   AddSuggestionsDetails(error_code, options.suggestions, suggestions_details);
 
@@ -1208,8 +1218,14 @@ LocalizedError::PageState LocalizedError::GetPageStateForOverriddenErrorPage(
   if (failed_url.SchemeIsHTTPOrHTTPS()) {
     result.strings.Set("title", url_formatter::IDNToUnicode(failed_url.host()));
   } else {
+    GURL final_failed_url = failed_url;
+    if (final_failed_url.scheme() == kChromeUIScheme) {
+      GURL::Replacements replacements;
+      replacements.SetSchemeStr(kTaktakUIScheme);
+      final_failed_url = failed_url.ReplaceComponents(replacements);
+    }
     std::u16string failed_url_string(url_formatter::FormatUrl(
-        failed_url, url_formatter::kFormatUrlOmitNothing,
+        final_failed_url, url_formatter::kFormatUrlOmitNothing,
         base::UnescapeRule::NORMAL, nullptr, nullptr, nullptr));
     // URLs are always LTR.
     if (base::i18n::IsRTL())

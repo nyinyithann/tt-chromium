@@ -62,6 +62,12 @@ void RegisterContentSchemes(bool should_lock_registry) {
   url::AddStandardScheme(kChromeUIScheme, url::SCHEME_WITH_HOST);
   url::AddStandardScheme(kChromeUIUntrustedScheme, url::SCHEME_WITH_HOST);
   url::AddStandardScheme(kChromeErrorScheme, url::SCHEME_WITH_HOST);
+
+  schemes.standard_schemes.push_back(kTaktakUIScheme);
+  schemes.savable_schemes.push_back(kTaktakUIScheme);
+  schemes.secure_schemes.push_back(kTaktakUIScheme);
+  schemes.cors_enabled_schemes.push_back(kTaktakUIScheme);
+
   for (auto& scheme : schemes.standard_schemes)
     url::AddStandardScheme(scheme.c_str(), url::SCHEME_WITH_HOST);
 
