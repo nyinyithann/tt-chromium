@@ -922,6 +922,17 @@ void RenderThreadImpl::RegisterSchemes() {
     WebSecurityPolicy::RegisterURLSchemeAsAllowingServiceWorkers(chrome_scheme);
   }
 
+  // taktak:
+  WebString taktak_scheme(WebString::FromASCII(kTaktakUIScheme));
+  WebSecurityPolicy::RegisterURLSchemeAsDisplayIsolated(taktak_scheme);
+  WebSecurityPolicy::RegisterURLSchemeAsNotAllowingJavascriptURLs(
+      taktak_scheme);
+  WebSecurityPolicy::RegisterURLSchemeAsWebUI(taktak_scheme);
+  if (base::FeatureList::IsEnabled(
+          features::kEnableServiceWorkersForChromeScheme)) {
+    WebSecurityPolicy::RegisterURLSchemeAsAllowingServiceWorkers(taktak_scheme);
+  }
+
   WebString chrome_untrusted_scheme(
       WebString::FromASCII(kChromeUIUntrustedScheme));
 

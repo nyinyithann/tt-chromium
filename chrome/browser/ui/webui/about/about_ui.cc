@@ -487,10 +487,10 @@ bool CompareConfigInfos(const content::WebUIConfigInfo& config1,
 
 std::string ChromeURLs(content::BrowserContext* browser_context) {
   std::string html;
-  AppendHeader(&html, "Chrome URLs");
+  AppendHeader(&html, "Taktak URLs");
   AppendBody(&html);
 
-  html += "<h2>List of Chrome URLs</h2>\n<ul>\n";
+  html += "<h2>List of Taktak URLs</h2>\n<ul>\n";
   const base::span<const base::cstring_view> hosts = chrome::ChromeURLHosts();
   std::vector<content::WebUIConfigInfo> infos;
   for (base::cstring_view host : hosts) {
@@ -538,7 +538,7 @@ std::string ChromeURLs(content::BrowserContext* browser_context) {
 #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
     for (const content::WebUIConfigInfo& info : infos) {
       std::string host = info.origin.host();
-      std::string scheme = info.origin.scheme();
+      std::string scheme = "taktak"; // info.origin.scheme();
       std::string url =
           base::StrCat({scheme, url::kStandardSchemeSeparator, host});
       html +=
@@ -548,7 +548,7 @@ std::string ChromeURLs(content::BrowserContext* browser_context) {
     }
 
     html +=
-        "</ul><a id=\"internals\"><h2>List of chrome://internals "
+        "</ul><a id=\"internals\"><h2>List of taktak://internals "
         "pages</h2></a>\n<ul>\n";
     const base::span<const base::cstring_view> internals_paths =
         chrome::ChromeInternalsURLPaths();
@@ -557,8 +557,8 @@ std::string ChromeURLs(content::BrowserContext* browser_context) {
         [](base::cstring_view v) -> std::string_view { return v; });
     std::ranges::sort(sorted_internals_paths);
     for (const std::string_view path : sorted_internals_paths) {
-      html += base::StrCat({"<li><a href='chrome://internals/", path,
-                            "'>chrome://internals/", path, "</a></li>\n"});
+      html += base::StrCat({"<li><a href='taktak://internals/", path,
+                            "'>taktak://internals/", path, "</a></li>\n"});
     }
   }
 
@@ -587,7 +587,7 @@ std::string ChromeURLs(content::BrowserContext* browser_context) {
   {
 #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
     for (base::cstring_view url : chrome::ChromeDebugURLs()) {
-      html += base::StrCat({"<li>", url, "</li>\n"});
+      html += base::StrCat({"<li>taktak", url.substr(5), "</li>\n"});
     }
   }
   html += "</ul>\n";

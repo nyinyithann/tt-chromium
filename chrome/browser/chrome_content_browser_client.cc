@@ -7212,6 +7212,18 @@ bool ChromeContentBrowserClient::HandleWebUI(
                                  chrome::kChromeUIHelpHost);
   }
 
+  // Rewrite taktak:// to chrome://
+  if (url->SchemeIs(content::kTaktakUIScheme)) {
+  	GURL::Replacements replacements;
+    replacements.SetSchemeStr(content::kChromeUIScheme);
+    *url = url->ReplaceComponents(replacements);
+  	// Rewrite taktak://help to chrome://settings/help.
+    if (url->host() == chrome::kChromeUIHelpHost) {
+    	*url = ReplaceURLHostAndPath(*url, chrome::kChromeUISettingsHost,
+                                 chrome::kChromeUIHelpHost);
+    }
+  }
+
 #if BUILDFLAG(CHROME_ROOT_STORE_CERT_MANAGEMENT_UI)
   if (base::FeatureList::IsEnabled(features::kEnableCertManagementUIV2) &&
       url->SchemeIs(content::kChromeUIScheme) &&
