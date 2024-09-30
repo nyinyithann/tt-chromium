@@ -430,7 +430,11 @@ void SidePanelCoordinator::UpdatePinState() {
     PinnedToolbarActionsModel* const actions_model =
         PinnedToolbarActionsModel::Get(profile);
 
-    updated_pin_state = !actions_model->Contains(action_id.value());
+    if (current_entry_->key().id() == SidePanelEntryId::kAIChat) {
+        updated_pin_state = false;
+    } else {
+        updated_pin_state = !actions_model->Contains(action_id.value());
+    }
     actions_model->UpdatePinnedState(action_id.value(), updated_pin_state);
   }
 
@@ -910,6 +914,10 @@ void SidePanelCoordinator::NotifyPinnedContainerOfActiveStateChange(
     std::optional<actions::ActionId> action_id =
         SidePanelEntryIdToActionId(key.id());
     CHECK(action_id.has_value());
+
+    if (key.id() == SidePanelEntryId::kAIChat) {
+        is_active = false;
+    }
     toolbar_container->UpdateActionState(*action_id, is_active);
   }
 }

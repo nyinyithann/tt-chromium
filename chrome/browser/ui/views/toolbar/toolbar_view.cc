@@ -950,8 +950,9 @@ void ToolbarView::AIChatButtonPressed(const ui::Event& event) {
 //                              NewTabTypes::NEW_TAB_BUTTON_IN_TOOLBAR_FOR_TOUCH,
 //                              NewTabTypes::NEW_TAB_ENUM_COUNT);
 
-     auto key =  SidePanelEntryKey(SidePanelEntryId::kReadingList);
-     browser_view_ -> browser()->GetFeatures().side_panel_ui()->Toggle(key, SidePanelOpenTrigger::kPinnedEntryToolbarButton);
+     auto key =  SidePanelEntryKey(SidePanelEntryId::kAIChat);
+     auto *spui = browser_view_ -> browser()->GetFeatures().side_panel_ui();
+     spui->Toggle(key, SidePanelOpenTrigger::kToolbarButton);
 }
 
 bool ToolbarView::AcceleratorPressed(const ui::Accelerator& accelerator) {
