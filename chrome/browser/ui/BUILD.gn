@@ -380,6 +380,8 @@ static_library("ui") {
     "webui/version/version_ui.h",
     "webui/webui_load_timer.cc",
     "webui/webui_load_timer.h",
+    "webui/hello_world/hello_world_ui.cc",
+    "webui/hello_world/hello_world_ui.h",
   ]
 
   if (enable_session_service) {
