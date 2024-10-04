@@ -142,7 +142,7 @@ void BrowserActions::InitializeBrowserActions() {
               SidePanelAction(SidePanelEntryId::kAIChat,
                               IDS_AI_CHAT_TITLE, IDS_AI_CHAT_TITLE,
                               kSpeakerIcon, kActionAIChat,
-                              browser, true),
+                              browser, false),
               SidePanelAction(SidePanelEntryId::kAboutThisSite,
                               IDS_PAGE_INFO_ABOUT_THIS_PAGE_TITLE,
                               IDS_PAGE_INFO_ABOUT_THIS_PAGE_TITLE,
