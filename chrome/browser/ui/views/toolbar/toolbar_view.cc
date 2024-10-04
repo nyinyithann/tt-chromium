@@ -520,7 +520,7 @@ void ToolbarView::Init() {
 
 auto ai_chat_button = std::make_unique<ToolbarButton>(base::BindRepeating(
         &ToolbarView::AIChatButtonPressed, base::Unretained(this)));
-ai_chat_button->SetTooltipText(u"Yep AI Chatbot");
+ai_chat_button->SetTooltipText(u"Yep AI Chat");
 ai_chat_button->SetHorizontalAlignment(gfx::ALIGN_CENTER);
 ai_chat_button->SetVectorIcon(kSpeakerIcon);
 ai_chat_button->SetVisible(true);
