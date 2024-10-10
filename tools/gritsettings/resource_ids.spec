@@ -738,6 +738,11 @@
       "includes": [5450],
     },
 
+  "<(SHARED_INTERMEDIATE_DIR)/chrome/browser/resources/donuts/resources.grd": {
+      "META": {"sizes": {"includes": [10]}},
+      "includes": [5452],
+    },
+
   "<(SHARED_INTERMEDIATE_DIR)/chrome/browser/resources/key_value_pair_viewer_shared/resources.grd": {
    "META": {"sizes": {"includes": [10]}},
     "includes": [5460],

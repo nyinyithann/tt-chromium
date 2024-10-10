@@ -17,8 +17,10 @@
 #include "chrome/grit/generated_resources.h"
 #include "ui/base/metadata/metadata_impl_macros.h"
 #include "ui/views/view_class_properties.h"
+#include "chrome/browser/ui/webui/donuts/donuts_ui.h"
 
 using SidePanelWebUIViewT_ReadingListUI = SidePanelWebUIViewT<ReadingListUI>;
+//using SidePanelWebUIViewT_ReadingListUI = SidePanelWebUIViewT<DonutsUI>;
 BEGIN_TEMPLATE_METADATA(SidePanelWebUIViewT_ReadingListUI, SidePanelWebUIViewT)
 END_METADATA
 
@@ -30,6 +32,11 @@ ReadLaterSidePanelWebView::ReadLaterSidePanelWebView(
               &ReadLaterSidePanelWebView::UpdateActiveURLToActiveTab,
               base::Unretained(this)),
           close_cb,
+//          std::make_unique<WebUIContentsWrapperT<DonutsUI>>(
+//                  GURL(chrome::kChromeUIDonutsURL),
+//                  browser->profile(),
+//                  IDS_READ_LATER_TITLE,
+//                  /*esc_closes_ui=*/false)),
           std::make_unique<WebUIContentsWrapperT<ReadingListUI>>(
               GURL(chrome::kChromeUIReadLaterURL),
               browser->profile(),
@@ -38,8 +45,8 @@ ReadLaterSidePanelWebView::ReadLaterSidePanelWebView(
       browser_(browser) {
   SetProperty(views::kElementIdentifierKey,
               kReadLaterSidePanelWebViewElementId);
-  extensions::BookmarkManagerPrivateDragEventRouter::CreateForWebContents(
-      contents_wrapper()->web_contents());
+//  extensions::BookmarkManagerPrivateDragEventRouter::CreateForWebContents(
+//      contents_wrapper()->web_contents());
   browser_->tab_strip_model()->AddObserver(this);
 }
 
@@ -49,17 +56,17 @@ void ReadLaterSidePanelWebView::OnTabStripModelChanged(
     TabStripModel* tab_strip_model,
     const TabStripModelChange& change,
     const TabStripSelectionChange& selection) {
-  if (GetVisible() && selection.active_tab_changed())
-    UpdateActiveURL(tab_strip_model->GetActiveWebContents());
+//  if (GetVisible() && selection.active_tab_changed())
+//    UpdateActiveURL(tab_strip_model->GetActiveWebContents());
 }
 
 void ReadLaterSidePanelWebView::TabChangedAt(content::WebContents* contents,
                                              int index,
                                              TabChangeType change_type) {
-  if (GetVisible() && index == browser_->tab_strip_model()->active_index() &&
-      change_type == TabChangeType::kAll) {
-    UpdateActiveURL(browser_->tab_strip_model()->GetWebContentsAt(index));
-  }
+//  if (GetVisible() && index == browser_->tab_strip_model()->active_index() &&
+//      change_type == TabChangeType::kAll) {
+//    UpdateActiveURL(browser_->tab_strip_model()->GetWebContentsAt(index));
+//  }
 }
 
 void ReadLaterSidePanelWebView::UpdateActiveURL(
@@ -68,12 +75,12 @@ void ReadLaterSidePanelWebView::UpdateActiveURL(
   if (!controller || !contents)
     return;
 
-  controller->GetAs<ReadingListUI>()->SetActiveTabURL(
-      chrome::GetURLToBookmark(contents));
+//  controller->GetAs<ReadingListUI>()->SetActiveTabURL(
+//      chrome::GetURLToBookmark(contents));
 }
 
 void ReadLaterSidePanelWebView::UpdateActiveURLToActiveTab() {
-  UpdateActiveURL(browser_->tab_strip_model()->GetActiveWebContents());
+//  UpdateActiveURL(browser_->tab_strip_model()->GetActiveWebContents());
 }
 
 BEGIN_METADATA(ReadLaterSidePanelWebView)
