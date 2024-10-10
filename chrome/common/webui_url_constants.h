@@ -706,8 +706,8 @@ inline constexpr char kTriggeredResetProfileSettingsSubPage[] =
 inline constexpr char kChromeUIHelloWorldURL[] = "chrome://hello-world/";
 inline constexpr char kChromeUIHelloWorldHost[] = "hello-world";
 
-inline constexpr char kChromeUIDonutsURL[] = "chrome://donuts/";
-inline constexpr char kChromeUIDonutsHost[] = "donuts";
+inline constexpr char kChromeUIDonutsURL[] = "chrome://chat/";
+inline constexpr char kChromeUIDonutsHost[] = "chat";
 
 #if BUILDFLAG(IS_WIN)
 // TODO(crbug.com/40647483): Remove when issue is resolved.
