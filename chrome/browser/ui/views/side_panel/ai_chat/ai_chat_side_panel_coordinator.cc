@@ -14,6 +14,7 @@
 #include "ui/base/ui_base_features.h"
 #include "ui/views/vector_icons.h"
 #include "chrome/browser/ui/views/side_panel/ai_chat_side_panel_web_view.h"
+#include "chrome/browser/ui/views/side_panel/read_later_side_panel_web_view.h"
 
 AIChatSidePanelCoordinator::AIChatSidePanelCoordinator(
         Browser* browser)
@@ -32,7 +33,8 @@ void AIChatSidePanelCoordinator::CreateAndRegisterEntry(
 
 std::unique_ptr<views::View>
 AIChatSidePanelCoordinator::CreateAIChatWebView() {
-    return std::make_unique<AIChatSidePanelWebView>(&GetBrowser());
+    return std::make_unique<AIChatSidePanelWebView>(&GetBrowser(),
+                                                    base::RepeatingClosure());
 }
 
 BROWSER_USER_DATA_KEY_IMPL(AIChatSidePanelCoordinator);

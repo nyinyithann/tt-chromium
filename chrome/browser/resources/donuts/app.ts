@@ -25,7 +25,13 @@ import {ApiProxyImpl} from "./api_proxy.js";
 // };
 
 export class DonutsAppElement extends CrLitElement {
+    private apiProxy_: ApiProxy =
+        ApiProxyImpl.getInstance();
 
+    constructor() {
+        super();
+        setTimeout(() => this.apiProxy_.handler.showUI(),0);
+    }
     static get is() {
         return 'donuts-app';
     }
@@ -46,8 +52,6 @@ export class DonutsAppElement extends CrLitElement {
 
     protected message_: string = loadTimeData.getString('message');
 
-    private apiProxy_: ApiProxy =
-        ApiProxyImpl.getInstance();
     checkNumberOfDonuts() {
       this.apiProxy_.handler.getNumberOfDonuts().then(
             (value: {numDonuts: number}) => {

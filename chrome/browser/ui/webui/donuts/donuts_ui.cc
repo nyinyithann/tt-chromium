@@ -77,5 +77,5 @@ void DonutsUI::CreatePageHandler(
         mojo::PendingReceiver<donuts::mojom::PageHandler> receiver) {
     DCHECK(page);
     page_handler_ = std::make_unique<DonutsPageHandler>(
-            std::move(receiver), std::move(page));
+            std::move(receiver), std::move(page), this);
 }

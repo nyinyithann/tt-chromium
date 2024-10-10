@@ -41,7 +41,7 @@ public:
     void BindInterface(
             mojo::PendingReceiver<donuts::mojom::PageHandlerFactory> receiver);
 
-    static constexpr std::string GetWebUIName() { return "ReadingList"; }
+    static constexpr std::string GetWebUIName() { return "AIChatSidePanel"; }
 
 private:
     // donuts::mojom::PageHandlerFactory:

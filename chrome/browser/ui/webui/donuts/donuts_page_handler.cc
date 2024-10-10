@@ -6,13 +6,16 @@
 
 DonutsPageHandler::DonutsPageHandler(
         mojo::PendingReceiver<donuts::mojom::PageHandler> receiver,
-        mojo::PendingRemote<donuts::mojom::Page> page)
+        mojo::PendingRemote<donuts::mojom::Page> page,
+        DonutsUI* donuts_ui)
         : receiver_(this, std::move(receiver)),
-          page_(std::move(page)) {
+          page_(std::move(page)),
+          donuts_ui_(donuts_ui){
+    LOG(INFO) << "Construct DonutsPageHandler";
 }
 
 DonutsPageHandler::~DonutsPageHandler() {
-    LOG(INFO) << "GetOven()->TurnOffGas()";
+    LOG(INFO) << "Destruct DonutsPageHandler";
 }
 
 // Triggered by outside asynchronous event; sends information to the renderer.
@@ -36,4 +39,17 @@ void DonutsPageHandler::GetNumberOfDonuts(GetNumberOfDonutsCallback callback) {
     LOG(INFO) << "Called GetNumberOfDonuts";
     uint32_t result = 6; // GetOven()->GetNumberOfDonuts();
     std::move(callback).Run(result);
+}
+
+void DonutsPageHandler::ShowUI() {
+    auto embedder = donuts_ui_->embedder();
+    if (embedder) {
+        embedder->ShowUI();
+    }
+}
+
+void DonutsPageHandler::CloseUI() {
+    auto embedder = donuts_ui_ ->embedder();
+    if (embedder)
+        embedder->CloseUI();
 }

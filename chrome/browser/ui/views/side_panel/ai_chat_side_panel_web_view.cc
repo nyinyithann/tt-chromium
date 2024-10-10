@@ -20,6 +20,39 @@
 #include "ui/views/controls/webview/webview.h"
 #include "url/gurl.h"
 
+using SidePanelWebUIViewT_DonutsUI = SidePanelWebUIViewT<DonutsUI>;
+BEGIN_TEMPLATE_METADATA(SidePanelWebUIViewT_DonutsUI, SidePanelWebUIViewT)
+END_METADATA
+
+AIChatSidePanelWebView::AIChatSidePanelWebView(
+        Browser *browser,
+        base::RepeatingClosure close_cb)
+        : SidePanelWebUIViewT(
+              base::BindRepeating(
+                      &AIChatSidePanelWebView::UpdateActiveURLToActiveTab,
+                      base::Unretained(this)),
+                      close_cb,
+                      std::make_unique<WebUIContentsWrapperT<DonutsUI>>(
+                        GURL(chrome::kChromeUIDonutsURL),
+                        browser->profile(),
+                        IDS_AI_CHAT_TITLE,
+                        /*esc_closes_ui=*/false)),
+        browser_(browser) {
+
+    SetProperty(views::kElementIdentifierKey,
+                kAIChatSidePanelWebViewElementId);
+}
+
+void AIChatSidePanelWebView::UpdateActiveURLToActiveTab() {
+    LOG(INFO) << "AIChatSidePanelWebView::UpdateActiveURLToActiveTab()";
+}
+
+AIChatSidePanelWebView::~AIChatSidePanelWebView() = default;
+
+BEGIN_METADATA(AIChatSidePanelWebView)
+END_METADATA
+
+/* initial old one
 AIChatSidePanelWebView::AIChatSidePanelWebView(Browser *browser) : browser_(browser) {
 //    auto* layout = SetLayoutManager(std::make_unique<views::FlexLayout>());
 //
@@ -35,12 +68,11 @@ AIChatSidePanelWebView::AIChatSidePanelWebView(Browser *browser) : browser_(brow
 //    // Add the label to the view
 //    AddChildView(label1);
 //    AddChildView(label2);
-    SetLayoutManager(std::make_unique<views::FillLayout>());
+        SetLayoutManager(std::make_unique<views::FillLayout>());
 
-    auto *webview_ = AddChildView(std::make_unique<views::WebView>(browser_->profile()));
-    //webview_->GetWebContents()->SetDelegate(this);
-    webview_->LoadInitialURL(GURL("https://yep.com/chat"));
-    webview_->GetWebContents()->Focus();
-}
-
-AIChatSidePanelWebView::~AIChatSidePanelWebView() = default;
+        auto *webview_ = AddChildView(std::make_unique<views::WebView>(browser_->profile()));
+        //webview_->GetWebContents()->SetDelegate(this);
+        webview_->LoadInitialURL(GURL("https://yep.com/chat"));
+        webview_->GetWebContents()->Focus();
+    }
+*/

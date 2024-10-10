@@ -18,6 +18,13 @@ interface PageHandler {
 
   // Expects a response from the browser.
   GetNumberOfDonuts() => (uint32 num_donuts);
+
+
+  // Notify the backend that the UI is ready to be shown.
+  ShowUI();
+
+  // Notify the backend that the dialog should be closed.
+  CloseUI();
 };
 
 // Called from C++ side of chrome://donuts. (Browser -> Renderer)
