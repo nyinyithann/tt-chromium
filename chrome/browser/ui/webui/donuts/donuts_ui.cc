@@ -59,6 +59,11 @@ DonutsUI::DonutsUI(content::WebUI* web_ui)
    // only fill placeholder in html if use AddResourcePath alone
     source->AddString("mmmDonuts", "Mojom!");
    // source->AddResourcePath("", IDR_DONUTS_DONUTS_HTML);
+
+   // this should be added if call internal resources via xml http
+    source->OverrideContentSecurityPolicy(
+            network::mojom::CSPDirectiveName::ConnectSrc,
+            "connect-src *;");
 }
 
 //

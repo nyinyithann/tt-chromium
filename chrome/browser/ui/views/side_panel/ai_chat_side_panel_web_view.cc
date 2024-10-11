@@ -44,35 +44,10 @@ AIChatSidePanelWebView::AIChatSidePanelWebView(
 }
 
 void AIChatSidePanelWebView::UpdateActiveURLToActiveTab() {
-    LOG(INFO) << "AIChatSidePanelWebView::UpdateActiveURLToActiveTab()";
+    LOG(INFO) << "To get current url of the tab";
 }
 
 AIChatSidePanelWebView::~AIChatSidePanelWebView() = default;
 
 BEGIN_METADATA(AIChatSidePanelWebView)
 END_METADATA
-
-/* initial old one
-AIChatSidePanelWebView::AIChatSidePanelWebView(Browser *browser) : browser_(browser) {
-//    auto* layout = SetLayoutManager(std::make_unique<views::FlexLayout>());
-//
-//    // Configure layout properties to center the label both vertically and horizontally
-//    layout->SetOrientation(views::LayoutOrientation::kVertical) // Stack items vertically
-//            .SetMainAxisAlignment(views::LayoutAlignment::kCenter) // Align in the center of the main axis (vertical)
-//            .SetCrossAxisAlignment(views::LayoutAlignment::kCenter); // Align in the center of the cross axis (horizontal)
-//
-//    // Create a label to add to the layout
-//    auto* label1 = new views::Label(u"Yep AI Chat");
-//    auto* label2 = new views::Label(u"coming soon...");
-//
-//    // Add the label to the view
-//    AddChildView(label1);
-//    AddChildView(label2);
-        SetLayoutManager(std::make_unique<views::FillLayout>());
-
-        auto *webview_ = AddChildView(std::make_unique<views::WebView>(browser_->profile()));
-        //webview_->GetWebContents()->SetDelegate(this);
-        webview_->LoadInitialURL(GURL("https://yep.com/chat"));
-        webview_->GetWebContents()->Focus();
-    }
-*/
