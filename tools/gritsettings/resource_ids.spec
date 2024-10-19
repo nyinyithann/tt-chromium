@@ -487,6 +487,8 @@
   # END chrome/browser section.
 
   # START chrome/ WebUI resources section
+
+
   "<(SHARED_INTERMEDIATE_DIR)/chrome/browser/resources/browsing_topics/resources.grd": {
     "META": {"sizes": {"includes": [10]}},
     "includes": [4280],
@@ -730,6 +732,17 @@
    "META": {"sizes": {"includes": [80],}},
     "includes": [5440],
   },
+
+  "<(SHARED_INTERMEDIATE_DIR)/chrome/browser/resources/hello_world/resources.grd": {
+      "META": {"sizes": {"includes": [5]}},
+      "includes": [5450],
+    },
+
+  "<(SHARED_INTERMEDIATE_DIR)/chrome/browser/resources/donuts/resources.grd": {
+      "META": {"sizes": {"includes": [10]}},
+      "includes": [5452],
+    },
+
   "<(SHARED_INTERMEDIATE_DIR)/chrome/browser/resources/key_value_pair_viewer_shared/resources.grd": {
    "META": {"sizes": {"includes": [10]}},
     "includes": [5460],
@@ -738,6 +751,7 @@
    "META": {"sizes": {"includes": [20]}},
     "includes": [5480],
   },
+
   # END chrome/ WebUI resources section
 
   # START chrome/ miscellaneous section.
@@ -1356,4 +1370,5 @@
 
   # Thinking about appending to the end?
   # Please read the header and find the right section above instead.
+
 }

@@ -703,6 +703,12 @@ inline constexpr char kSyncSetupSubPage[] = "syncSetup";
 inline constexpr char kTriggeredResetProfileSettingsSubPage[] =
     "triggeredResetProfileSettings";
 
+inline constexpr char kChromeUIHelloWorldURL[] = "chrome://hello-world/";
+inline constexpr char kChromeUIHelloWorldHost[] = "hello-world";
+
+inline constexpr char kChromeUIDonutsURL[] = "chrome://chat/";
+inline constexpr char kChromeUIDonutsHost[] = "chat";
+
 #if BUILDFLAG(IS_WIN)
 // TODO(crbug.com/40647483): Remove when issue is resolved.
 inline constexpr char kChromeUIWelcomeWin10Host[] = "welcome-win10";

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #include "chrome/browser/ui/webui/chrome_web_ui_configs.h"
+#include "content/public/browser/web_ui.h"
 
 #include "build/build_config.h"
 #include "build/chromeos_buildflags.h"
@@ -25,7 +26,6 @@
 #include "content/public/browser/webui_config_map.h"
 #include "extensions/buildflags/buildflags.h"
 #include "printing/buildflags/buildflags.h"
-
 #if !BUILDFLAG(IS_ANDROID)
 #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
 #include "chrome/browser/ui/webui/media_router/cast_feedback_ui.h"
@@ -70,6 +70,9 @@
 
 #if BUILDFLAG(IS_WIN) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX)
 #include "chrome/browser/ui/webui/whats_new/whats_new_ui.h"
+#include "chrome/browser/ui/webui/hello_world/hello_world_ui.h"
+#include "chrome/browser/ui/webui/donuts/donuts_ui.h"
+
 #endif
 
 void RegisterChromeWebUIConfigs() {
@@ -97,6 +100,8 @@ void RegisterChromeWebUIConfigs() {
   map.AddWebUIConfig(std::make_unique<OmniboxUIConfig>());
   map.AddWebUIConfig(std::make_unique<PasswordManagerInternalsUIConfig>());
   map.AddWebUIConfig(std::make_unique<PredictorsUIConfig>());
+  map.AddWebUIConfig(std::make_unique<HelloWorldUIConfig>());
+  map.AddWebUIConfig(std::make_unique<DonutsUIConfig>());
 
 #if !BUILDFLAG(IS_CHROMEOS_LACROS)
   map.AddWebUIConfig(std::make_unique<BluetoothInternalsUIConfig>());

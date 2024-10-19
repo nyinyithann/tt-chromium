@@ -22,12 +22,37 @@
       [show-background-image] #backgroundImage {
         visibility: visible;
       }
+
+      .main {
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        display: flex;
+        justify-content: center; /* Horizontally centers the content */
+        align-items: center;    /* Vertically centers the content */
+        flex-direction: column;
+      }
+
+      .welcome {
+        font-size: large;
+        color: rgba(159, 159, 159, 0.65);
+      }
+
+      .landing {
+        font-size: small;
+        color: rgba(135, 143, 139, 0.68);
+      }
+
     </style>
   </head>
   <body>
     <iframe id="backgroundImage" src="$i18nRaw{backgroundImageUrl}"></iframe>
-    <ntp-app></ntp-app>
-    <script type="module" src="new_tab_page.js"></script>
+    <div class="main">
+      <div class="welcome">Welcome to Taktak</div>
+      <div class="landing"> {landing page here}</div>
+    </div>
+<!--    <ntp-app></ntp-app>-->
+<!--    <script type="module" src="new_tab_page.js"></script>-->
     <link rel="stylesheet" href="chrome://resources/css/text_defaults_md.css">
     <link rel="stylesheet" href="chrome://theme/colors.css?sets=ui,chrome">
     <link rel="stylesheet" href="shared_vars.css">

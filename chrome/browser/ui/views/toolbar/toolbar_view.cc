@@ -126,6 +126,15 @@
 #include "ui/views/widget/widget.h"
 #include "ui/views/window/non_client_view.h"
 
+#include "chrome/browser/ui/views/side_panel/side_panel_coordinator.h"
+#include "chrome/browser/ui/views/side_panel/side_panel_entry_key.h"
+#include "chrome/browser/ui/views/side_panel/side_panel_enums.h"
+
+#include "chrome/browser/ui/views/side_panel/side_panel_entry_id.h"
+#include "chrome/browser/ui/views/side_panel/side_panel_entry_key.h"
+#include "chrome/browser/ui/views/side_panel/side_panel_enums.h"
+#include "chrome/browser/ui/views/side_panel/side_panel_ui.h"
+
 #if BUILDFLAG(IS_WIN) || BUILDFLAG(IS_MAC)
 #include "chrome/browser/recovery/recovery_install_global_error_factory.h"
 #endif
@@ -508,6 +517,16 @@ void ToolbarView::Init() {
                               kToolbarNewTabButtonElementId);
   new_tab_button_ = container_view_->AddChildView(std::move(new_tab_button));
 #endif  // BUILDFLAG(ENABLE_WEBUI_TAB_STRIP)
+
+auto ai_chat_button = std::make_unique<ToolbarButton>(base::BindRepeating(
+        &ToolbarView::AIChatButtonPressed, base::Unretained(this)));
+ai_chat_button->SetTooltipText(u"Yep AI Chat");
+ai_chat_button->SetHorizontalAlignment(gfx::ALIGN_CENTER);
+ai_chat_button->SetVectorIcon(kSpeakerIcon);
+ai_chat_button->SetVisible(true);
+ai_chat_button->SetProperty(views::kElementIdentifierKey,
+                            kToolbarNewTabButtonElementId);
+container_view_->AddChildView(std::move(ai_chat_button));
 
   if (base::FeatureList::IsEnabled(features::kResponsiveToolbar)) {
     overflow_button_ =
@@ -923,6 +942,17 @@ void ToolbarView::NewTabButtonPressed(const ui::Event& event) {
   UMA_HISTOGRAM_ENUMERATION("Tab.NewTab",
                             NewTabTypes::NEW_TAB_BUTTON_IN_TOOLBAR_FOR_TOUCH,
                             NewTabTypes::NEW_TAB_ENUM_COUNT);
+}
+
+void ToolbarView::AIChatButtonPressed(const ui::Event& event) {
+//    chrome::ExecuteCommand(browser_view_->browser(), IDC_NEW_TAB);
+//    UMA_HISTOGRAM_ENUMERATION("Tab.NewTab",
+//                              NewTabTypes::NEW_TAB_BUTTON_IN_TOOLBAR_FOR_TOUCH,
+//                              NewTabTypes::NEW_TAB_ENUM_COUNT);
+
+     auto key =  SidePanelEntryKey(SidePanelEntryId::kAIChat);
+     auto *spui = browser_view_ -> browser()->GetFeatures().side_panel_ui();
+     spui->Toggle(key, SidePanelOpenTrigger::kToolbarButton);
 }
 
 bool ToolbarView::AcceleratorPressed(const ui::Accelerator& accelerator) {

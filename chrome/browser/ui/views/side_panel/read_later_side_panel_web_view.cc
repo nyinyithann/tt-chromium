@@ -17,6 +17,7 @@
 #include "chrome/grit/generated_resources.h"
 #include "ui/base/metadata/metadata_impl_macros.h"
 #include "ui/views/view_class_properties.h"
+#include "chrome/browser/ui/webui/donuts/donuts_ui.h"
 
 using SidePanelWebUIViewT_ReadingListUI = SidePanelWebUIViewT<ReadingListUI>;
 BEGIN_TEMPLATE_METADATA(SidePanelWebUIViewT_ReadingListUI, SidePanelWebUIViewT)
@@ -73,7 +74,7 @@ void ReadLaterSidePanelWebView::UpdateActiveURL(
 }
 
 void ReadLaterSidePanelWebView::UpdateActiveURLToActiveTab() {
-  UpdateActiveURL(browser_->tab_strip_model()->GetActiveWebContents());
+    UpdateActiveURL(browser_->tab_strip_model()->GetActiveWebContents());
 }
 
 BEGIN_METADATA(ReadLaterSidePanelWebView)

@@ -130,6 +130,8 @@ template("chrome_extra_paks") {
       "$root_gen_dir/third_party/blink/public/resources/blink_resources.pak",
       "$root_gen_dir/third_party/blink/public/resources/inspector_overlay_resources.pak",
       "$root_gen_dir/ui/resources/webui_resources.pak",
+      "$root_gen_dir/chrome/hello_world_resources.pak",
+      "$root_gen_dir/chrome/donuts_resources.pak",
     ]
     deps = [
       "//base/tracing/protos:chrome_track_event_resources",
@@ -146,6 +148,8 @@ template("chrome_extra_paks") {
       "//third_party/blink/public:devtools_inspector_resources",
       "//third_party/blink/public:resources",
       "//ui/resources",
+      "//chrome/browser/resources/hello_world:resources",
+      "//chrome/browser/resources/donuts:resources",
     ]
     if (defined(invoker.deps)) {
       deps += invoker.deps

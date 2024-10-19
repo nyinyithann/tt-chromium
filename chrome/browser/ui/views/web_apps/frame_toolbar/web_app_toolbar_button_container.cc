@@ -31,6 +31,7 @@
 #include "ui/base/metadata/metadata_impl_macros.h"
 #include "ui/views/layout/flex_layout.h"
 #include "ui/views/window/hit_test_utils.h"
+#include "base/functional/bind.h"
 
 #if BUILDFLAG(IS_CHROMEOS_ASH)
 #include "chrome/browser/ui/ash/system_web_apps/system_web_app_ui_utils.h"
@@ -194,6 +195,16 @@ WebAppToolbarButtonContainer::WebAppToolbarButtonContainer(
     views::SetHitTestComponent(avatar_button_, static_cast<int>(HTCLIENT));
     avatar_button_->SetVisible(app_controller->IsProfileMenuButtonVisible());
   }
+//    new ToolbarButton(
+//            base::BindRepeating(&BrowserView::MyButtonPressed, base::Unretained(this)));
+//    my_button->SetTooltipText(u"My Button");
+//    toolbar_->AddChildView(my_button);
+  auto* ai_btn = new ToolbarButton(
+            base::BindRepeating(&WebAppToolbarButtonContainer::AIChatButtonPressed, base::Unretained(this)));
+  ai_btn->SetTooltipText(u"tooltip text");
+  ai_chat_button_ = AddChildView(ai_btn);
+  ai_chat_button_->SetVisible(true);
+
 #endif
 
   if (app_controller->HasTitlebarMenuButton()) {
@@ -215,6 +226,10 @@ WebAppToolbarButtonContainer::~WebAppToolbarButtonContainer() {
   if (immersive_controller) {
     immersive_controller->RemoveObserver(this);
   }
+}
+
+void WebAppToolbarButtonContainer::AIChatButtonPressed(const ui::Event& event) {
+    LOG(INFO) << "My button was pressed!";
 }
 
 void WebAppToolbarButtonContainer::UpdateStatusIconsVisibility() {

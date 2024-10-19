@@ -176,6 +176,9 @@ class WebAppToolbarButtonContainer : public views::View,
   raw_ptr<SystemAppAccessibleName> system_app_accessible_name_ = nullptr;
   raw_ptr<DownloadToolbarButtonView> download_button_ = nullptr;
   raw_ptr<AvatarToolbarButton> avatar_button_ = nullptr;
+  raw_ptr<ToolbarButton> ai_chat_button_ = nullptr;
+
+  void AIChatButtonPressed(const ui::Event& event);
 };
 
 #endif  // CHROME_BROWSER_UI_VIEWS_WEB_APPS_FRAME_TOOLBAR_WEB_APP_TOOLBAR_BUTTON_CONTAINER_H_

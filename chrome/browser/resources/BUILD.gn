@@ -69,6 +69,8 @@ group("resources") {
       "web_app_internals:resources",
       "webui_gallery:resources",
       "whats_new:resources",
+      "hello_world:resources",
+      "donuts:resources",
     ]
     if (is_chrome_branded) {
       public_deps += [

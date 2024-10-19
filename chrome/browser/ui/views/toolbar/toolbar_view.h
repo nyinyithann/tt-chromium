@@ -289,6 +289,7 @@ class ToolbarView : public views::AccessiblePaneView,
   void ActiveStateChanged();
 
   void NewTabButtonPressed(const ui::Event& event);
+  void AIChatButtonPressed(const ui::Event& event);
 
   gfx::SlideAnimation size_animation_{this};
 

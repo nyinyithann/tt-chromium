@@ -380,6 +380,12 @@ static_library("ui") {
     "webui/version/version_ui.h",
     "webui/webui_load_timer.cc",
     "webui/webui_load_timer.h",
+    "webui/hello_world/hello_world_ui.cc",
+    "webui/hello_world/hello_world_ui.h",
+    "webui/donuts/donuts_ui.cc",
+    "webui/donuts/donuts_ui.h",
+    "webui/donuts/donuts_page_handler.cc",
+    "webui/donuts/donuts_page_handler.h",
   ]
 
   if (enable_session_service) {
@@ -2013,6 +2019,7 @@ static_library("ui") {
       "//chrome/browser/ui/webui/top_chrome",
       "//chrome/browser/ui/webui/top_chrome:impl",
       "//chrome/browser/ui/webui/util",
+      "//chrome/browser/ui/webui/donuts:mojo_bindings", # not sure if it's the right place though
       "//chrome/browser/web_applications",
       "//chrome/common:buildflags",
       "//chrome/common:version_header",

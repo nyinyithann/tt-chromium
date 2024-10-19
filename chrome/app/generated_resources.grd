@@ -8946,6 +8946,18 @@ Keep your key file in a safe place. You will need it to create new versions of y
         </message>
       </if>
 
+      <!-- AI Chat button -->
+      <if expr="use_titlecase">
+        <message name="IDS_AI_CHAT_TITLE" desc="Title of the AI Chat">
+          Yep AI Chat
+        </message>
+      </if>
+      <if expr="not use_titlecase">
+        <message name="IDS_AI_CHAT_TITLE" desc="Title of the AI Chat">
+          Yep AI Chat
+        </message>
+      </if>
+
       <!-- Read Later button and menu -->
       <if expr="use_titlecase">
         <message name="IDS_READ_LATER_TITLE" desc="Title of the Read later menu">

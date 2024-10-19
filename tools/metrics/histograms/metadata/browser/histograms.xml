@@ -23,6 +23,7 @@ chromium-metrics-reviews@google.com.
 <histograms>
 
 <variants name="SidePanelEntry">
+  <variant name="test"/>
   <variant name="AboutThisSite"/>
   <variant name="Assistant"/>
   <variant name="Bookmarks"/>
