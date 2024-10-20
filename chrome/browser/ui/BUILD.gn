@@ -280,6 +280,10 @@ static_library("ui") {
     "webui/version/version_ui.h",
     "webui/webui_load_timer.cc",
     "webui/webui_load_timer.h",
+    "webui/chat/chat_ui.cc",
+    "webui/chat/chat_ui.h",
+    "webui/chat/chat_page_handler.cc",
+    "webui/chat/chat_page_handler.h",
   ]
 
   if (enable_session_service) {
@@ -1743,6 +1747,7 @@ static_library("ui") {
       "//chrome/browser/ui/views/side_panel:side_panel_enums",
       "//chrome/browser/ui/views/toolbar",
       "//chrome/browser/ui/webui/cr_components/theme_color_picker",
+      "//chrome/browser/ui/webui/chat:mojo_bindings",
       "//chrome/browser/ui/webui/searchbox",
       "//chrome/browser/ui/webui/settings",
       "//chrome/browser/ui/webui/settings:impl",

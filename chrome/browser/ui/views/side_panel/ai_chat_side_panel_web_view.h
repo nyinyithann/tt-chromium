@@ -6,20 +6,22 @@
 #include "base/memory/raw_ptr.h"
 #include "chrome/browser/ui/tabs/tab_strip_model_observer.h"
 #include "chrome/browser/ui/views/side_panel/side_panel_web_ui_view.h"
-#include "chrome/browser/ui/webui/side_panel/reading_list/reading_list_ui.h"
 #include "ui/base/metadata/metadata_header_macros.h"
 #include "ui/views/controls/webview/webview.h"
+#include "chrome/browser/ui/webui/chat/chat_ui.h"
 
 class Browser;
 
-class AIChatSidePanelWebView : public views::View {
+class AIChatSidePanelWebView : public SidePanelWebUIViewT<ChatUI> {
+    using SidePanelWebUIViewT_ChatUI = SidePanelWebUIViewT<ChatUI>;
+    METADATA_HEADER(AIChatSidePanelWebView, SidePanelWebUIViewT_ChatUI)
     public:
-        AIChatSidePanelWebView(Browser* browser);
+        AIChatSidePanelWebView(Browser* browser, base::RepeatingClosure close_cb);
         AIChatSidePanelWebView(const AIChatSidePanelWebView&) = delete;
         AIChatSidePanelWebView& operator=(const AIChatSidePanelWebView&) =
         delete;
         ~AIChatSidePanelWebView() override;
-
+        void UpdateActiveURLToActiveTab();
     private:
         const raw_ptr<Browser> browser_;
         base::WeakPtrFactory<AIChatSidePanelWebView> weak_factory_{this};

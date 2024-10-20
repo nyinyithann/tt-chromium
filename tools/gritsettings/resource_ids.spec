@@ -648,6 +648,10 @@
     "META": {"sizes": {"includes": [10]}},
     "includes": [5200],
   },
+  "<(SHARED_INTERMEDIATE_DIR)/chrome/browser/resources/chat/resources.grd": {
+       "META": {"sizes": {"includes": [20]}},
+       "includes": [5480],
+  },
   # END chrome/ WebUI resources section
 
   # START chrome/ miscellaneous section.

@@ -31,7 +31,8 @@ void AIChatSidePanelCoordinator::CreateAndRegisterEntry(SidePanelRegistry* globa
 
 std::unique_ptr<views::View>
 AIChatSidePanelCoordinator::CreateAIChatWebView() {
-    return std::make_unique<AIChatSidePanelWebView>(&GetBrowser());
+    return std::make_unique<AIChatSidePanelWebView>(&GetBrowser(),
+                                                    base::RepeatingClosure());
 }
 
 void AIChatSidePanelCoordinator::UpdateOpeningPanelId(SidePanelEntryId panel_id) {

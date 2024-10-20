@@ -69,6 +69,7 @@ group("resources") {
       "web_app_internals:resources",
       "webui_gallery:resources",
       "whats_new:resources",
+      "chat:resources",
     ]
     if (is_chrome_branded) {
       public_deps += [
