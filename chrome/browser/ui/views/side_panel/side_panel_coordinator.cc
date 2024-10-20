@@ -394,10 +394,12 @@ void SidePanelCoordinator::UpdatePinState() {
     updated_pin_state = !actions_model->IsActionPinned(*extension_id);
     actions_model->SetActionVisibility(*extension_id, updated_pin_state);
   } else {
-    PinnedToolbarActionsModel* const actions_model =
-        PinnedToolbarActionsModel::Get(profile);
-
-    updated_pin_state = !actions_model->Contains(action_id.value());
+    PinnedToolbarActionsModel* const actions_model = PinnedToolbarActionsModel::Get(profile);
+    if (current_entry_->key().id() == SidePanelEntryId::kAIChat) {
+        updated_pin_state = false;
+    } else {
+        updated_pin_state = !actions_model->Contains(action_id.value());
+    }
     actions_model->UpdatePinnedState(action_id.value(), updated_pin_state);
   }
 
@@ -835,6 +837,9 @@ void SidePanelCoordinator::NotifyPinnedContainerOfActiveStateChange(
     std::optional<actions::ActionId> action_id =
         SidePanelEntryIdToActionId(key.id());
     CHECK(action_id.has_value());
+    if (key.id() == SidePanelEntryId::kAIChat) {
+        is_active = false;
+    }
     toolbar_container->UpdateActionState(*action_id, is_active);
   }
 }
@@ -1103,7 +1108,7 @@ void SidePanelCoordinator::OnViewVisibilityChanged(views::View* observed_view,
   if (!content_wrapper->children().empty()) {
     content_wrapper->RemoveChildViewT(content_wrapper->children().front());
   }
-  SidePanelUtil::RecordSidePanelClosed(opened_timestamp_);
+  SidePanelUtil::RecordSidePanelClosed(browser_view_->browser(), previous_entry->key().id(),  opened_timestamp_);
 
   view_state_observers_.Notify(
       &SidePanelViewStateObserver::OnSidePanelDidClose);

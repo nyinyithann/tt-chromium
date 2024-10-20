@@ -31,12 +31,17 @@
 #include "ui/accessibility/accessibility_features.h"
 #include "ui/actions/actions.h"
 #include "chrome/browser/ui/views/side_panel/extensions/extension_side_panel_manager.h"
+#include "chrome/browser/ui/views/side_panel/ai_chat/ai_chat_side_panel_coordinator.h"
 
 // static
 void SidePanelUtil::PopulateGlobalEntries(Browser* browser,
                                           SidePanelRegistry* window_registry) {
   // Add reading list.
   ReadingListSidePanelCoordinator::GetOrCreateForBrowser(browser)
+      ->CreateAndRegisterEntry(window_registry);
+
+  // Add ai chat
+  AIChatSidePanelCoordinator::GetOrCreateForBrowser(browser)
       ->CreateAndRegisterEntry(window_registry);
 
   // Add bookmarks.
@@ -87,11 +92,17 @@ void SidePanelUtil::RecordSidePanelShowOrChangeEntryTrigger(
   }
 }
 
-void SidePanelUtil::RecordSidePanelClosed(base::TimeTicks opened_timestamp) {
+void SidePanelUtil::RecordSidePanelClosed(Browser* browser,
+                                          SidePanelEntry::Id id,
+                                          base::TimeTicks opened_timestamp) {
   base::RecordAction(base::UserMetricsAction("SidePanel.Hide"));
 
   base::UmaHistogramLongTimes("SidePanel.OpenDuration",
                               base::TimeTicks::Now() - opened_timestamp);
+
+
+  auto* ai_chat_coordinator = AIChatSidePanelCoordinator::GetOrCreateForBrowser(browser);
+  ai_chat_coordinator->UpdateClosingPanelId(id);
 }
 
 void SidePanelUtil::RecordSidePanelResizeMetrics(SidePanelEntry::Id id,
@@ -147,6 +158,10 @@ void SidePanelUtil::RecordEntryShowTriggeredMetrics(
     Browser* browser,
     SidePanelEntry::Id id,
     std::optional<SidePanelUtil::SidePanelOpenTrigger> trigger) {
+
+  auto* ai_chat_coordinator = AIChatSidePanelCoordinator::GetOrCreateForBrowser(browser);
+  ai_chat_coordinator->UpdateOpeningPanelId(id);
+
   if (trigger.has_value()) {
     base::UmaHistogramEnumeration(
         base::StrCat({"SidePanel.", SidePanelEntryIdToHistogramName(id),

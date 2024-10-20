@@ -8965,6 +8965,18 @@ Keep your key file in a safe place. You will need it to create new versions of y
         </message>
       </if>
 
+      <!-- AI Chat button -->
+      <if expr="use_titlecase">
+          <message name="IDS_AI_CHAT_TITLE" desc="Title of the AI Chat">
+            Chat
+          </message>
+      </if>
+      <if expr="not use_titlecase">
+        <message name="IDS_AI_CHAT_TITLE" desc="Title of the AI Chat">
+            Chat
+        </message>
+      </if>
+
       <!-- Side panel strings -->
       <message name="IDS_ACCNAME_SIDE_PANEL_RESIZE" is_accessibility_with_no_ui="true" desc="Screen reader announcement when the side panel resize handle is focused.">
         Side Panel Resize Handle
