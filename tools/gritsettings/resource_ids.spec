@@ -588,6 +588,10 @@
     "META": {"sizes": {"includes": [15],}},
     "includes": [4900],
   },
+  "<(SHARED_INTERMEDIATE_DIR)/chrome/browser/resources/side_panel/chat/resources.grd": {
+       "META": {"sizes": {"includes": [20]}},
+       "includes": [4910],
+  },
   "<(SHARED_INTERMEDIATE_DIR)/chrome/browser/resources/side_panel/shared/resources.grd": {
     "META": {"sizes": {"includes": [15],}},
     "includes": [4920],
@@ -647,10 +651,6 @@
   "<(SHARED_INTERMEDIATE_DIR)/chrome/browser/resources/whats_new/resources.grd": {
     "META": {"sizes": {"includes": [10]}},
     "includes": [5200],
-  },
-  "<(SHARED_INTERMEDIATE_DIR)/chrome/browser/resources/chat/resources.grd": {
-       "META": {"sizes": {"includes": [20]}},
-       "includes": [5480],
   },
   # END chrome/ WebUI resources section
 

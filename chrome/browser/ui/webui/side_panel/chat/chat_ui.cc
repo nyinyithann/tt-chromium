@@ -1,5 +1,5 @@
 #include "chat_ui.h"
-#include "chrome/browser/ui/webui/chat/chat_page_handler.h"
+#include "chat_page_handler.h"
 #include "chrome/browser/ui/webui/webui_util.h"
 #include "chrome/common/webui_url_constants.h"
 #include "content/public/common/url_constants.h"
@@ -9,8 +9,8 @@
 #include "content/public/browser/web_ui_data_source.h"
 #include "content/public/browser/web_ui_controller.h"
 #include "content/public/browser/webui_config.h"
-#include "chrome/grit/chat_resources.h"
-#include "chrome/grit/chat_resources_map.h"
+#include "chrome/grit/side_panel_chat_resources.h"
+#include "chrome/grit/side_panel_chat_resources_map.h"
 #include "ui/webui/mojo_web_ui_controller.h"
 #include "chrome/browser/profiles/profile.h"
 
@@ -23,8 +23,8 @@ ChatUI::ChatUI(content::WebUI* web_ui)
             profile, chrome::kChromeUIChatHost);
     webui::SetupWebUIDataSource(
             source,
-            base::make_span(kChatResources, kChatResourcesSize),
-            IDR_CHAT_CHAT_HTML);
+            base::make_span(kSidePanelChatResources, kSidePanelChatResourcesSize),
+            IDR_SIDE_PANEL_CHAT_CHAT_HTML);
 }
 
 ChatUI::~ChatUI() = default;

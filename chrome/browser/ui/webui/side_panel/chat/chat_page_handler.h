@@ -1,10 +1,10 @@
 #ifndef CHROMIUM_CHAT_PAGE_HANDLER_H
 #define CHROMIUM_CHAT_PAGE_HANDLER_H
 
-#include "chrome/browser/ui/webui/chat/chat.mojom.h"
+#include "chrome/browser/ui/webui/side_panel/chat/chat.mojom.h"
 #include "mojo/public/cpp/bindings/receiver.h"
 #include "mojo/public/cpp/bindings/remote.h"
-#include "chrome/browser/ui/webui/chat/chat_ui.h"
+#include "chat_ui.h"
 
 class ChatPageHandler : public chat::mojom::PageHandler {
 public:

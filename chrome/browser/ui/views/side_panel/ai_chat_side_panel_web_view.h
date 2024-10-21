@@ -8,7 +8,7 @@
 #include "chrome/browser/ui/views/side_panel/side_panel_web_ui_view.h"
 #include "ui/base/metadata/metadata_header_macros.h"
 #include "ui/views/controls/webview/webview.h"
-#include "chrome/browser/ui/webui/chat/chat_ui.h"
+#include "chrome/browser/ui/webui/side_panel/chat/chat_ui.h"
 
 class Browser;
 

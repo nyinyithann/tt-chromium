@@ -1,7 +1,7 @@
 #ifndef CHROMIUM_CHAT_UI_H
 #define CHROMIUM_CHAT_UI_H
 
-#include "chrome/browser/ui/webui/chat/chat.mojom.h"
+#include "chrome/browser/ui/webui/side_panel/chat/chat.mojom.h"
 #include "content/public/browser/web_ui_controller.h"
 #include "content/public/browser/webui_config.h"
 #include "chrome/common/webui_url_constants.h"

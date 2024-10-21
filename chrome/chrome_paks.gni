@@ -130,14 +130,12 @@ template("chrome_extra_paks") {
       "$root_gen_dir/third_party/blink/public/resources/blink_resources.pak",
       "$root_gen_dir/third_party/blink/public/resources/inspector_overlay_resources.pak",
       "$root_gen_dir/ui/resources/webui_resources.pak",
-      "$root_gen_dir/chrome/chat_resources.pak",
     ]
     deps = [
       "//base/tracing/protos:chrome_track_event_resources",
       "//chrome/app/theme:chrome_unscaled_resources",
       "//chrome/browser:resources",
       "//chrome/browser/resources:resources",
-      "//chrome/browser/resources/chat:resources",
       "//chrome/common:resources",
       "//components/autofill/core/browser:autofill_address_rewriter_resources",
       "//components/resources",
@@ -195,6 +193,7 @@ template("chrome_extra_paks") {
         "$root_gen_dir/chrome/side_panel_history_clusters_resources.pak",
         "$root_gen_dir/chrome/side_panel_read_anything_resources.pak",
         "$root_gen_dir/chrome/side_panel_reading_list_resources.pak",
+        "$root_gen_dir/chrome/side_panel_chat_resources.pak",
         "$root_gen_dir/chrome/side_panel_shared_resources.pak",
         "$root_gen_dir/chrome/signin_resources.pak",
         "$root_gen_dir/chrome/suggest_internals_resources.pak",
