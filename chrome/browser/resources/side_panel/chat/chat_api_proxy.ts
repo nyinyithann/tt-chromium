@@ -1,9 +1,11 @@
-import {PageCallbackRouter, PageHandlerFactory, PageHandlerRemote} from './chat.mojom-webui.js';
-import type {PageHandlerInterface} from './chat.mojom-webui.js';
+import {PageCallbackRouter, PageHandlerFactory, PageHandlerRemote, SiteInfo}
+    from "./chat.mojom-webui.js";
 
 export interface ChatApiProxy {
+    getSiteInfo():Promise<{siteInfo: SiteInfo}>
+    showUI(): void;
+    closeUI(): void;
     getCallbackRouter(): PageCallbackRouter;
-    handler: PageHandlerInterface;
 }
 
 let instance: ChatApiProxy|null = null;
@@ -31,5 +33,17 @@ export class ChatApiProxyImpl implements ChatApiProxy {
 
     getCallbackRouter() {
         return this.callbackRouter;
+    }
+
+    showUI() {
+        this.handler.showUI();
+    }
+
+    closeUI(){
+        this.handler.closeUI();
+    }
+
+    getSiteInfo() {
+      return this.handler.getSiteInfo();
     }
 }

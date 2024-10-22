@@ -1,12 +1,12 @@
 #include "ai_chat_side_panel_web_view.h"
 
 #include <memory>
-#include "ui/views/view.h"
-#include "ui/views/controls/label.h"
-#include "ui/views/layout/flex_layout.h"
-#include "ui/views/layout/fill_layout.h"
-#include "ui/views/layout/layout_types.h"
+#include <string>
+
+#include "base/strings/string_util.h"
+#include "base/strings/utf_string_conversions.h"
 #include "chrome/browser/profiles/profile.h"
+#include "chrome/browser/ui/bookmarks/bookmark_utils.h"
 #include "chrome/browser/ui/browser.h"
 #include "chrome/browser/ui/browser_element_identifiers.h"
 #include "chrome/browser/ui/ui_features.h"
@@ -14,35 +14,95 @@
 #include "chrome/common/webui_url_constants.h"
 #include "chrome/grit/generated_resources.h"
 #include "ui/base/metadata/metadata_impl_macros.h"
-#include "ui/views/view_class_properties.h"
+#include "ui/views/controls/label.h"
 #include "ui/views/controls/webview/webview.h"
+#include "ui/views/layout/fill_layout.h"
+#include "ui/views/layout/flex_layout.h"
+#include "ui/views/layout/layout_types.h"
+#include "ui/views/view.h"
+#include "ui/views/view_class_properties.h"
 #include "url/gurl.h"
 
 using SidePanelWebUIViewT_ChatUI = SidePanelWebUIViewT<ChatUI>;
 BEGIN_TEMPLATE_METADATA(SidePanelWebUIViewT_ChatUI, SidePanelWebUIViewT)
 END_METADATA
 
-AIChatSidePanelWebView::AIChatSidePanelWebView(
-        Browser *browser,
-        base::RepeatingClosure close_cb)
-        : SidePanelWebUIViewT(
-        base::BindRepeating(
-                &AIChatSidePanelWebView::UpdateActiveURLToActiveTab,
-                base::Unretained(this)),
-        close_cb,
-        std::make_unique<WebUIContentsWrapperT<ChatUI>>(
-                GURL(chrome::kChromeUIChatURL),
-                browser->profile(),
-                IDS_AI_CHAT_TITLE,
-                /*esc_closes_ui=*/false)),
-          browser_(browser) {
-
-    SetProperty(views::kElementIdentifierKey,
-                kChatSidePanelWebViewElementId);
+AIChatSidePanelWebView::AIChatSidePanelWebView(Browser* browser,
+                                               base::RepeatingClosure close_cb)
+    : SidePanelWebUIViewT(
+          base::BindRepeating(
+              &AIChatSidePanelWebView::UpdateActiveSiteInfoToActiveTab,
+              base::Unretained(this)),
+          close_cb,
+          std::make_unique<WebUIContentsWrapperT<ChatUI>>(
+              GURL(chrome::kChromeUIChatURL),
+              browser->profile(),
+              IDS_AI_CHAT_TITLE,
+              /*esc_closes_ui=*/false)),
+      browser_(browser) {
+  SetProperty(views::kElementIdentifierKey, kChatSidePanelWebViewElementId);
+  browser_->tab_strip_model()->AddObserver(this);
 }
 
-void AIChatSidePanelWebView::UpdateActiveURLToActiveTab() {
-    LOG(INFO) << "To get current url of the tab";
+void AIChatSidePanelWebView::OnTabStripModelChanged(
+    TabStripModel* tab_strip_model,
+    const TabStripModelChange& change,
+    const TabStripSelectionChange& selection) {
+  if (GetVisible() && selection.active_tab_changed()) {
+    UpdateActiveSiteInfo(tab_strip_model->GetActiveWebContents());
+  }
+}
+
+void AIChatSidePanelWebView::TabChangedAt(content::WebContents* contents,
+                                          int index,
+                                          TabChangeType change_type) {
+  if (GetVisible() && index == browser_->tab_strip_model()->active_index() &&
+      change_type == TabChangeType::kAll) {
+    UpdateActiveSiteInfo(browser_->tab_strip_model()->GetWebContentsAt(index));
+  }
+}
+
+void AIChatSidePanelWebView::UpdateActiveSiteInfo(
+    content::WebContents* contents) {
+  auto* controller = contents_wrapper()->GetWebUIController();
+  if (!controller || !contents) {
+    return;
+  }
+
+  //    auto title = base::UTF16ToUTF8( web_contents_->GetTitle());
+  //    std::string url;
+  //    const GURL gurl = web_contents_->GetLastCommittedURL();
+  //    if (gurl.SchemeIsHTTPOrHTTPS()) {
+  //        url = gurl.spec();
+  //    }
+  //    chat::mojom::SiteInfoPtr site_info = chat::mojom::SiteInfo::New();
+  //    site_info->title = title;
+  //    site_info->url = url;
+  //
+  auto title = contents->GetTitle();
+  std::string url;
+  const GURL gurl = contents->GetLastCommittedURL();
+  if (gurl.SchemeIsHTTPOrHTTPS()) {
+    url = gurl.spec();
+  }
+  //    bool ConversationDriver::IsContentAssociationPossible() {
+  //        const GURL url = GetPageURL();
+  //
+  //        if (!base::Contains(kAllowedSchemes, url.scheme())) {
+  //            return false;
+  //        }
+  //
+  //        return true;
+  //    }
+  chat::mojom::SiteInfoPtr site_info = chat::mojom::SiteInfo::New();
+  site_info->title = base::UTF16ToUTF8(title);
+  site_info->url = url;
+
+  controller->GetAs<ChatUI>()->SetSiteInfo(site_info.Clone());
+}
+
+void AIChatSidePanelWebView::UpdateActiveSiteInfoToActiveTab() {
+  UpdateActiveSiteInfo(browser_->tab_strip_model()->GetActiveWebContents());
 }
 
 AIChatSidePanelWebView::~AIChatSidePanelWebView() = default;

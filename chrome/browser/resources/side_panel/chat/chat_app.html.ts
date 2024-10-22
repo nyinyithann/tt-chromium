@@ -4,7 +4,9 @@ import {html} from '//resources/lit/v3_0/lit.rollup.js';
 export function getHtml(this: ChatAppElement) {
     return html`
         <div id="container">
-            <div class="top">
+            <div>
+                <h5>${this.siteInfo_.url} </h5>
+                <h6>${this.siteInfo_.title}</h6>
             </div>
             <div class="middle"></div>
             <div class="bottom typing-textarea">

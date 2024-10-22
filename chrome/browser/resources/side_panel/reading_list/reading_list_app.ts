@@ -59,9 +59,9 @@ export class ReadingListAppElement extends ReadingListAppElementBase {
 
   static override get properties() {
     return {
-      unreadItems_: {type: Array},
-      readItems_: {type: Array},
-      currentPageActionButtonState_: {type: Number},
+     unreadItems_: {type: Array},
+     readItems_: {type: Array},
+     currentPageActionButtonState_: {type: Number},
       buttonRipples: {type: Boolean},
       loadingContent_: {type: Boolean},
     };

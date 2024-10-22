@@ -42,5 +42,11 @@ void ChatUI::CreatePageHandler(
         mojo::PendingReceiver<chat::mojom::PageHandler> receiver) {
     DCHECK(page);
     page_handler_ = std::make_unique<ChatPageHandler>(
-            std::move(receiver), std::move(page), this);
+        std::move(receiver), std::move(page), this, web_ui());
+}
+
+void ChatUI::SetSiteInfo(chat::mojom::SiteInfoPtr site_info) {
+  if (page_handler_) {
+    page_handler_->SetSiteInfo(std::move(site_info));
+  }
 }

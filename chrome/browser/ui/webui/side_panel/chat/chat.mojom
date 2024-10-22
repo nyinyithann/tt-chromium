@@ -2,16 +2,26 @@ module chat.mojom;
 
 import "url/mojom/url.mojom";
 
-// Factory ensures that the Page and PageHandler interfaces are always created
-// together without requiring an initialization call from the WebUI to the
-// handler.
+struct SiteInfo {
+  // The title of the currently active tab if it has opening page
+  string? title;
+
+  // The url of the currently active tab if it has opening page
+  string? url;
+};
+
+// Used by the WebUI page to bootstrap bidirectional communication.
 interface PageHandlerFactory {
   CreatePageHandler(pending_remote<Page> page,
                     pending_receiver<PageHandler> handler);
 };
 
-// Called from TS side of chat (Renderer -> Browser)
+// Browser-side handler for requests from WebUI page.
+// Renderer -> Browser
 interface PageHandler {
+
+  GetSiteInfo() => (SiteInfo site_info);
+
   // Notify the backend that the UI is ready to be shown.
   ShowUI();
 
@@ -19,5 +29,8 @@ interface PageHandler {
   CloseUI();
 };
 
-// Called from C++ side of chat (Browser -> Renderer)
-interface Page {};
+// WebUI-side handler for requests from the browser.
+// Browser -> Renderer
+interface Page {
+    OnSiteInfoChanged(SiteInfo info);
+};

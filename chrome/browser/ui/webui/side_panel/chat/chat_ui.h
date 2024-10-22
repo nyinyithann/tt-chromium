@@ -2,16 +2,16 @@
 #define CHROMIUM_CHAT_UI_H
 
 #include "chrome/browser/ui/webui/side_panel/chat/chat.mojom.h"
+#include "chrome/browser/ui/webui/top_chrome/top_chrome_web_ui_controller.h"
+#include "chrome/browser/ui/webui/top_chrome/top_chrome_webui_config.h"
+#include "chrome/common/webui_url_constants.h"
 #include "content/public/browser/web_ui_controller.h"
 #include "content/public/browser/webui_config.h"
-#include "chrome/common/webui_url_constants.h"
 #include "content/public/common/url_constants.h"
-#include "ui/webui/mojo_web_ui_controller.h"
 #include "mojo/public/cpp/bindings/pending_receiver.h"
 #include "mojo/public/cpp/bindings/pending_remote.h"
 #include "mojo/public/cpp/bindings/receiver.h"
-#include "chrome/browser/ui/webui/top_chrome/top_chrome_web_ui_controller.h"
-#include "chrome/browser/ui/webui/top_chrome/top_chrome_webui_config.h"
+#include "ui/webui/mojo_web_ui_controller.h"
 
 // Forward declaration so that config definition can come before controller.
 class ChatUI;
@@ -44,8 +44,9 @@ public:
     static constexpr std::string
 
     GetWebUIName() { return "Chat"; }
+    void SetSiteInfo(chat::mojom::SiteInfoPtr site_info);
 
-private:
+   private:
     // chat::mojom::PageHandlerFactory:
     void CreatePageHandler(
             mojo::PendingRemote<chat::mojom::Page> page,
