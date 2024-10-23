@@ -15,7 +15,7 @@ AIChatToolbarButton::AIChatToolbarButton(PressedCallback callback)
      // Todo: to add localized text and vector icon
      SetTooltipText(u"Chat");
      SetHorizontalAlignment(gfx::ALIGN_CENTER);
-     SetVectorIcon(kSpeakerIcon);
+     SetVectorIcon(kChatIcon);
      SetVisible(true);
      ConfigureInkDropForToolbar(this);
 }
