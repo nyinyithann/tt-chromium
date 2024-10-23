@@ -44,7 +44,6 @@ class ToolbarButtonHighlightPathGenerator
         );
 
     SkPath path;
-   // path.addRoundRect(gfx::RectToSkRect(rect), radii, radii);
     path.addRoundRect(gfx::RectToSkRect( gfx::Rect( rect)), radii, radii);
     return path;
   }
